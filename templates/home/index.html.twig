@@ -1,0 +1,39 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Home - Booking System{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            {% if app.user %}
+                <div class="alert alert-success">
+                    <h4>Welcome, {{ app.user.email }}!</h4>
+                    <p>You are successfully logged in to the Booking System.</p>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>Your Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Email:</strong> {{ app.user.email }}</p>
+                        <p><strong>User ID:</strong> {{ app.user.id }}</p>
+                        <p><strong>Role:</strong> {{ app.user.role }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="jumbotron">
+                    <h1 class="display-4">Welcome to Booking System</h1>
+                    <p class="lead">Manage your bookings easily and efficiently.</p>
+                    <hr class="my-4">
+                    <p>Please log in or create an account to get started.</p>
+                    <a class="btn btn-primary btn-lg" href="{{ path('app_login') }}" role="button">Login</a>
+                    <a class="btn btn-success btn-lg" href="{{ path('app_signup') }}" role="button">Sign Up</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

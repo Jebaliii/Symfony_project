@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reservation{% endblock %}
+
+{% block body %}
+<h1>Reservation #{{ reservation.id }}</h1>
+<p><strong>User:</strong> {{ reservation.user.email }}</p>
+<p><strong>Hotel:</strong> {{ reservation.hotel.name }}</p>
+<p><strong>Check-in:</strong> {{ reservation.checkInDate ? reservation.checkInDate|date('Y-m-d') : '' }}</p>
+<p><strong>Check-out:</strong> {{ reservation.checkOutDate ? reservation.checkOutDate|date('Y-m-d') : '' }}</p>
+<p><strong>Payment:</strong> {{ reservation.paymentMethod }}</p>
+<p><strong>Status:</strong> {{ reservation.status }}</p>
+<a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">Back</a>
+{% endblock %}

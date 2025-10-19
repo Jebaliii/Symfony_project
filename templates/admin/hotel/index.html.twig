@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hotels{% endblock %}
+
+{% block body %}
+<h1>Hotels</h1>
+<a href="{{ path('admin_hotel_new') }}" class="btn btn-primary mb-3">New Hotel</a>
+<table class="table">
+    <thead><tr><th>Name</th><th>City</th><th>Price</th><th>Rooms</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for hotel in hotels %}
+        <tr>
+            <td>{{ hotel.name }}</td>
+            <td>{{ hotel.city }}</td>
+            <td>{{ hotel.pricePerNight }}</td>
+            <td>{{ hotel.availableRooms }}</td>
+            <td>
+                <a href="{{ path('admin_hotel_show', {id: hotel.id}) }}" class="btn btn-sm btn-secondary">Show</a>
+                <a href="{{ path('admin_hotel_edit', {id: hotel.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+                <form method="post" action="{{ path('admin_hotel_delete', {id: hotel.id}) }}" style="display:inline-block" onsubmit="return confirm('Delete?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete-hotel-' ~ hotel.id) }}">
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="5">No hotels</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

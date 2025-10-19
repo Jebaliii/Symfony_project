@@ -1,0 +1,57 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard - Select Payment Method{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Select Payment Method</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Hotel:</strong> {{ hotel.name }}<br>
+                        <strong>Check-in:</strong> {{ check_in_date }}<br>
+                        <strong>Check-out:</strong> {{ check_out_date }}<br>
+                        <strong>Price per night:</strong> {{ hotel.pricePerNight }} TND
+                    </div>
+
+                    <form method="POST" action="{{ path('app_confirm_reservation') }}" novalidate>
+                        <div class="mb-4">
+                            <h5>Choose Payment Method:</h5>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_liquide" value="liquide" required>
+                                <label class="form-check-label" for="payment_liquide">
+                                    <strong>💵 Liquide (Cash)</strong>
+                                    <small class="d-block text-muted">Pay in cash at the hotel</small>
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_cheque" value="cheque" required>
+                                <label class="form-check-label" for="payment_cheque">
+                                    <strong>📋 Chèque (Check)</strong>
+                                    <small class="d-block text-muted">Pay by check</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-success w-100">Confirm Reservation</button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ path('app_dashboard') }}" class="btn btn-secondary w-100">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

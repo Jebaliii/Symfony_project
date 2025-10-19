@@ -1,0 +1,81 @@
+{% extends "base.html.twig" %}
+
+{% block title %}My Reservations{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">My Reservations</h1>
+        </div>
+    </div>
+
+    {% if reservations|length > 0 %}
+        <div class="row">
+            {% for reservation in reservations %}
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ reservation.hotel.name }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>City:</strong> {{ reservation.hotel.city.name }}
+                            </p>
+                            <p class="card-text">
+                                <strong>Address:</strong> {{ reservation.hotel.address }}
+                            </p>
+                            <p class="card-text">
+                                <strong>Check-in:</strong> {{ reservation.checkInDate|date('Y-m-d') }}
+                            </p>
+                            <p class="card-text">
+                                <strong>Check-out:</strong> {{ reservation.checkOutDate|date('Y-m-d') }}
+                            </p>
+                            <p class="card-text">
+                                <strong>Price per night:</strong> {{ reservation.hotel.pricePerNight }} TND
+                            </p>
+                            <p class="card-text">
+                                <strong>Payment Method:</strong> 
+                                {% if reservation.paymentMethod == 'liquide' %}
+                                    <span class="badge bg-info">💵 Cash</span>
+                                {% else %}
+                                    <span class="badge bg-warning">📋 Check</span>
+                                {% endif %}
+                            </p>
+                            <p class="card-text">
+                                <strong>Status:</strong> 
+                                {% if reservation.status == 'confirmed' %}
+                                    <span class="badge bg-success">Confirmed</span>
+                                {% elseif reservation.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ reservation.status }}</span>
+                                {% endif %}
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">Booked on: {{ reservation.createdAt|date('Y-m-d H:i') }}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <p>You don't have any reservations yet.</p>
+                    <a href="{{ path('app_dashboard') }}" class="btn btn-primary">Start Booking Now</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard - Select City{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">🏨 Welcome to Booking System</h1>
+            <p class="lead">Select a city in Tunisia to start your booking</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        {% for city in cities %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ city.name }}</h5>
+                        <p class="card-text text-muted">
+                            <small>{{ city.hotels|length }} hotels available</small>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-top">
+                        <a href="{{ path('app_select_city', {'cityId': city.id}) }}" class="btn btn-primary w-100">
+                            Select City
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    No cities available at the moment. Please check back later.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h4>My Reservations</h4>
+            <a href="{{ path('app_my_reservations') }}" class="btn btn-info">View My Reservations</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

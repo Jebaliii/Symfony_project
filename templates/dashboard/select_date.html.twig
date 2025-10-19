@@ -1,0 +1,53 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard - Select Dates{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Select Check-in and Check-out Dates</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Selected City:</strong> {{ city.name }}
+                    </div>
+
+                    <form method="POST" action="{{ path('app_select_date') }}" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="check_in_date" class="form-label">Check-in Date</label>
+                                <input type="date" id="check_in_date" name="check_in_date" class="form-control" required min="{{ 'now'|date('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="check_out_date" class="form-label">Check-out Date</label>
+                                <input type="date" id="check_out_date" name="check_out_date" class="form-control" required min="{{ 'now'|date('Y-m-d') }}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary w-100">Find Available Hotels</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Back to Cities</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure check-out date is after check-in date
+    document.getElementById('check_in_date').addEventListener('change', function() {
+        document.getElementById('check_out_date').min = this.value;
+    });
+</script>
+{% endblock %}
+

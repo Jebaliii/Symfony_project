@@ -1,0 +1,74 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Sign Up - Booking System{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h1 class="card-title text-center mb-4">Create Account</h1>
+
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                    <div class="mb-3">
+                        {{ form_label(form.email, 'Email Address', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        {% if form.email.vars.errors|length > 0 %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.email.vars.errors %}
+                                    {{ error.message }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.plainPassword.first, 'Password', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                        {% if form.plainPassword.first.vars.errors|length > 0 %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.plainPassword.first.vars.errors %}
+                                    {{ error.message }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.plainPassword.second, 'Confirm Password', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                        {% if form.plainPassword.second.vars.errors|length > 0 %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.plainPassword.second.vars.errors %}
+                                    {{ error.message }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.plainPassword.vars.errors|length > 0 %}
+                        <div class="alert alert-danger">
+                            {% for error in form.plainPassword.vars.errors %}
+                                {{ error.message }}<br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary w-100 mb-3'}}) }}
+
+                    {{ form_end(form) }}
+
+                    <hr>
+
+                    <p class="text-center mb-0">
+                        Already have an account? <a href="{{ path('app_login') }}" class="text-decoration-none">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reservations{% endblock %}
+
+{% block body %}
+<h1>Reservations</h1>
+<a href="{{ path('admin_reservation_new') }}" class="btn btn-primary mb-3">New Reservation</a>
+<table class="table">
+    <thead><tr><th>User</th><th>Hotel</th><th>Check-in</th><th>Check-out</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for res in reservations %}
+        <tr>
+            <td>{{ res.user.email }}</td>
+            <td>{{ res.hotel.name }}</td>
+            <td>{{ res.checkInDate ? res.checkInDate|date('Y-m-d') : '' }}</td>
+            <td>{{ res.checkOutDate ? res.checkOutDate|date('Y-m-d') : '' }}</td>
+            <td>{{ res.status }}</td>
+            <td>
+                <a href="{{ path('admin_reservation_show', {id: res.id}) }}" class="btn btn-sm btn-secondary">Show</a>
+                <a href="{{ path('admin_reservation_edit', {id: res.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+                <form method="post" action="{{ path('admin_reservation_delete', {id: res.id}) }}" style="display:inline-block" onsubmit="return confirm('Delete?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete-reservation-' ~ res.id) }}">
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="6">No reservations</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hotel: {{ hotel.name }}{% endblock %}
+
+{% block body %}
+<h1>{{ hotel.name }}</h1>
+<p>{{ hotel.description }}</p>
+<p><strong>Address:</strong> {{ hotel.address }}</p>
+<p><strong>Price per night:</strong> {{ hotel.pricePerNight }}</p>
+<p><strong>Available rooms:</strong> {{ hotel.availableRooms }}</p>
+<a href="{{ path('admin_hotel_index') }}" class="btn btn-secondary">Back</a>
+{% endblock %}
