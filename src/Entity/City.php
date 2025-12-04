@@ -18,6 +18,15 @@ class City
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 6, nullable: true)]
+    private ?string $latitude = null;
+
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 6, nullable: true)]
+    private ?string $longitude = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $boundary = null;
+
     #[ORM\OneToMany(targetEntity: Hotel::class, mappedBy: 'city', cascade: ['persist', 'remove'])]
     private Collection $hotels;
 
@@ -39,6 +48,42 @@ class City
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?string $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?string $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getBoundary(): ?string
+    {
+        return $this->boundary;
+    }
+
+    public function setBoundary(?string $boundary): static
+    {
+        $this->boundary = $boundary;
 
         return $this;
     }

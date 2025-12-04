@@ -31,6 +31,9 @@ class Hotel
     #[ORM\Column]
     private ?int $availableRooms = null;
 
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $imageUrl = null;
+
     #[ORM\ManyToOne(inversedBy: 'hotels')]
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
@@ -104,6 +107,18 @@ class Hotel
     public function setAvailableRooms(int $availableRooms): static
     {
         $this->availableRooms = $availableRooms;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): static
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }

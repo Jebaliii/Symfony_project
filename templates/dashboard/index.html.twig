@@ -2,47 +2,299 @@
 
 {% block title %}Dashboard - Select City{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #map {
+            height: calc(100vh - 56px); /* Subtract navbar height */
+            width: 100%;
+            position: fixed;
+            top: 56px; /* Navbar height */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            background-color: #e0e0e0; /* Gray background to see if container is visible */
+        }
+        .hotel-marker {
+            background-color: #007bff;
+            border: 3px solid #0056b3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .city-popup {
+            font-family: Arial, sans-serif;
+        }
+        .city-popup h6 {
+            margin: 0 0 8px 0;
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+        }
+        .city-popup p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .city-popup .hotel-count {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 8px 0;
+        }
+        .city-popup a {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .city-popup a:hover {
+            background-color: #0056b3;
+        }
+        .city-label {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8),
+                         -1px -1px 2px rgba(255,255,255,0.8),
+                         1px -1px 2px rgba(255,255,255,0.8),
+                         -1px 1px 2px rgba(255,255,255,0.8);
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mb-4">🏨 Welcome to Booking System</h1>
-            <p class="lead">Select a city in Tunisia to start your booking</p>
-        </div>
-    </div>
-
-    <div class="row mt-4">
-        {% for city in cities %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ city.name }}</h5>
-                        <p class="card-text text-muted">
-                            <small>{{ city.hotels|length }} hotels available</small>
-                        </p>
-                    </div>
-                    <div class="card-footer bg-white border-top">
-                        <a href="{{ path('app_select_city', {'cityId': city.id}) }}" class="btn btn-primary w-100">
-                            Select City
-                        </a>
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    No cities available at the moment. Please check back later.
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    <div class="row mt-5">
-        <div class="col-md-12">
-            <h4>My Reservations</h4>
-            <a href="{{ path('app_my_reservations') }}" class="btn btn-info">View My Reservations</a>
-        </div>
-    </div>
+<div id="map"></div>
+<div id="debug-info" style="position: fixed; top: 70px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; z-index: 9999; max-width: 300px;">
+    <strong>Debug Info:</strong><br>
+    Cities loaded: {{ cities|length }}<br>
+    <span id="map-status">Map status: Loading...</span><br>
+    <button onclick="initMap()" class="btn btn-sm btn-primary mt-2">Retry Map Init</button>
 </div>
+
+<script>
+    // Inline test to see if scripts are running
+    console.log('Inline script executed!');
+    document.getElementById('map-status').textContent = 'Map status: Inline script OK';
+</script>
+{% endblock %}
+
+{% block importmap %}{% endblock %}
+
+{% block javascripts %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script>
+        let mapInstance = null;
+        let currentCityPolygon = null; // Track the currently displayed city boundary
+
+        function initMap() {
+            const debugStatus = document.getElementById('map-status');
+
+            console.log('Initializing map...');
+            debugStatus.textContent = 'Map status: Initializing...';
+
+            // Check if Leaflet is loaded
+            if (typeof L === 'undefined') {
+                console.error('Leaflet library not loaded!');
+                debugStatus.textContent = 'Map status: ERROR - Leaflet not loaded';
+                alert('ERROR: Leaflet library failed to load. Please check your internet connection.');
+                return;
+            }
+            console.log('Leaflet version:', L.version);
+            debugStatus.textContent = 'Map status: Leaflet loaded v' + L.version;
+
+            // Check if map container exists
+            const mapContainer = document.getElementById('map');
+            console.log('Map container:', mapContainer);
+            console.log('Map container dimensions:', mapContainer.offsetWidth, 'x', mapContainer.offsetHeight);
+
+            if (!mapContainer) {
+                console.error('Map container not found!');
+                debugStatus.textContent = 'Map status: ERROR - Container not found';
+                return;
+            }
+
+            try {
+                // Remove existing map if any
+                if (mapInstance) {
+                    mapInstance.remove();
+                }
+
+                debugStatus.textContent = 'Map status: Creating map instance...';
+
+                // Initialize map centered on Tunisia
+                mapInstance = L.map('map').setView([35.5, 9.5], 6);
+                console.log('Map initialized:', mapInstance);
+                debugStatus.textContent = 'Map status: Map initialized';
+
+                // Add OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(mapInstance);
+
+                console.log('Tiles added to map');
+                debugStatus.textContent = 'Map status: Tiles added';
+
+                // Force map to recalculate size
+                mapInstance.invalidateSize();
+                console.log('Map size invalidated');
+                debugStatus.textContent = 'Map status: Ready!';
+
+                // Cities data from Twig
+                const cities = {{ cities|json_encode|raw }};
+                console.log('Cities data:', cities);
+                console.log('Number of cities:', cities.length);
+
+                // Function to create a circular boundary around a city (fallback)
+                function createCityBoundary(lat, lng, radiusKm) {
+                    const points = 64; // Number of points to create the circle
+                    const earthRadius = 6371; // Earth's radius in km
+                    const coordinates = [];
+
+                    for (let i = 0; i < points; i++) {
+                        const angle = (i * 360 / points) * Math.PI / 180;
+                        const dx = radiusKm / earthRadius;
+                        const dy = radiusKm / (earthRadius * Math.cos(lat * Math.PI / 180));
+
+                        const newLat = lat + (dx * Math.cos(angle)) * (180 / Math.PI);
+                        const newLng = lng + (dy * Math.sin(angle)) * (180 / Math.PI);
+
+                        coordinates.push([newLat, newLng]);
+                    }
+
+                    return coordinates;
+                }
+
+                // Function to get city boundary (real or fallback)
+                function getCityBoundary(city) {
+                    // If city has real boundary data, use it
+                    if (city.boundary && Array.isArray(city.boundary) && city.boundary.length > 0) {
+                        return city.boundary;
+                    }
+
+                    // Otherwise, create a circular boundary as fallback
+                    const lat = parseFloat(city.latitude);
+                    const lng = parseFloat(city.longitude);
+                    return createCityBoundary(lat, lng, 15);
+                }
+
+                // Add markers for each city
+                let markersAdded = 0;
+                cities.forEach(function(city) {
+                    if (city.latitude && city.longitude) {
+                        const lat = parseFloat(city.latitude);
+                        const lng = parseFloat(city.longitude);
+                        const hotelCount = city.hotelCount || 0;
+
+                        console.log('Adding marker for:', city.name, 'at', lat, lng);
+
+                        // Create custom HTML icon with hotel count
+                        const customIcon = L.divIcon({
+                            html: `<div class="hotel-marker" style="width: 50px; height: 50px; font-size: 18px; line-height: 50px; text-align: center;">${hotelCount}</div>`,
+                            iconSize: [50, 50],
+                            iconAnchor: [25, 25],
+                            popupAnchor: [0, -25],
+                            className: 'custom-marker'
+                        });
+
+                        // Create popup content
+                        const selectCityUrl = `/dashboard/select-city/${city.id}`;
+                        const popupContent = `
+                            <div class="city-popup">
+                                <h6>${city.name}</h6>
+                                <div class="hotel-count">${hotelCount} Hotels</div>
+                                <a href="${selectCityUrl}">
+                                    View Hotels
+                                </a>
+                            </div>
+                        `;
+
+                        // Create marker with custom icon
+                        const marker = L.marker([lat, lng], { icon: customIcon }).addTo(mapInstance);
+
+                        // Bind popup
+                        marker.bindPopup(popupContent);
+
+                        // Add click event to show city boundary and popup
+                        marker.on('click', function() {
+                            // Remove previous city boundary if exists
+                            if (currentCityPolygon) {
+                                mapInstance.removeLayer(currentCityPolygon);
+                            }
+
+                            // Get city boundary (real or fallback)
+                            const boundaryCoords = getCityBoundary(city);
+
+                            console.log('Boundary for', city.name, ':', boundaryCoords);
+
+                            // Create and add city boundary polygon
+                            currentCityPolygon = L.polygon(boundaryCoords, {
+                                color: '#007bff',
+                                fillColor: '#007bff',
+                                fillOpacity: 0.2,
+                                weight: 2
+                            }).addTo(mapInstance);
+
+                            // Add city name label to the polygon
+                            currentCityPolygon.bindTooltip(city.name, {
+                                permanent: true,
+                                direction: 'center',
+                                className: 'city-label'
+                            }).openTooltip();
+
+                            // Open the marker popup
+                            marker.openPopup();
+
+                            // Zoom to fit the boundary
+                            const bounds = currentCityPolygon.getBounds();
+                            mapInstance.fitBounds(bounds, {
+                                padding: [50, 50],
+                                animate: true,
+                                duration: 0.5
+                            });
+                        });
+
+                        markersAdded++;
+                    }
+                });
+
+                console.log('Markers added:', markersAdded);
+                debugStatus.innerHTML = 'Map status: Ready!<br>Markers: ' + markersAdded;
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                debugStatus.textContent = 'Map status: ERROR - ' + error.message;
+                alert('ERROR: ' + error.message);
+            }
+        }
+
+        // Auto-initialize on window load
+        window.addEventListener('load', initMap);
+    </script>
 {% endblock %}
 

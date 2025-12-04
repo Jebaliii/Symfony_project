@@ -1,0 +1,191 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Online Payment{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .payment-card {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card-input {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .card-input:focus {
+            border-color: #0d6efd;
+            background: white;
+            outline: none;
+        }
+        .card-logos {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .card-logo {
+            width: 50px;
+            height: 32px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .reservation-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #198754;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+    <div class="payment-card">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🔒 Secure Online Payment</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="secure-badge">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                    </svg>
+                    <span>Your payment is secured with SSL encryption</span>
+                </div>
+
+                <!-- Reservation Summary -->
+                <div class="reservation-summary">
+                    <h5 class="mb-3">Reservation Summary</h5>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Hotel:</strong></div>
+                        <div class="col-6 text-end">{{ reservation.hotel.name }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Check-in:</strong></div>
+                        <div class="col-6 text-end">{{ reservation.checkInDate|date('Y-m-d') }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Check-out:</strong></div>
+                        <div class="col-6 text-end">{{ reservation.checkOutDate|date('Y-m-d') }}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-6"><strong>Total Amount:</strong></div>
+                        <div class="col-6 text-end"><h5 class="text-primary mb-0">{{ reservation.hotel.pricePerNight }} TND</h5></div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <form method="POST" action="{{ path('app_process_payment') }}" id="paymentForm">
+                    <div class="card-logos">
+                        <div class="card-logo">VISA</div>
+                        <div class="card-logo">MC</div>
+                        <div class="card-logo">AMEX</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="card_number" class="form-label">Card Number</label>
+                        <input type="text" class="form-control card-input" id="card_number" name="card_number" 
+                               placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="card_holder" class="form-label">Cardholder Name</label>
+                        <input type="text" class="form-control card-input" id="card_holder" name="card_holder" 
+                               placeholder="JOHN DOE" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="expiry_date" class="form-label">Expiry Date</label>
+                            <input type="text" class="form-control card-input" id="expiry_date" name="expiry_date" 
+                                   placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control card-input" id="cvv" name="cvv" 
+                                   placeholder="123" maxlength="4" required>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            💳 Pay {{ reservation.hotel.pricePerNight }} TND
+                        </button>
+                        <a href="{{ path('app_cancel_payment', {'reservationId': reservation.id}) }}" class="btn btn-outline-secondary">
+                            Cancel Payment
+                        </a>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <small class="text-muted">
+                        By completing this payment, you agree to our terms and conditions
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Format card number with spaces
+    document.getElementById('card_number').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s/g, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue;
+    });
+
+    // Format expiry date
+    document.getElementById('expiry_date').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4);
+        }
+        e.target.value = value;
+    });
+
+    // Only allow numbers in CVV
+    document.getElementById('cvv').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
+
+    // Form validation
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
+        const cvv = document.getElementById('cvv').value;
+        
+        if (cardNumber.length < 13 || cardNumber.length > 19) {
+            e.preventDefault();
+            alert('Please enter a valid card number');
+            return false;
+        }
+        
+        if (cvv.length < 3 || cvv.length > 4) {
+            e.preventDefault();
+            alert('Please enter a valid CVV');
+            return false;
+        }
+    });
+</script>
+{% endblock %}
+

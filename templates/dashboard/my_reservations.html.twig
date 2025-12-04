@@ -35,23 +35,32 @@
                                 <strong>Price per night:</strong> {{ reservation.hotel.pricePerNight }} TND
                             </p>
                             <p class="card-text">
-                                <strong>Payment Method:</strong> 
-                                {% if reservation.paymentMethod == 'liquide' %}
+                                <strong>Payment Method:</strong>
+                                {% if reservation.paymentMethod == 'online' %}
+                                    <span class="badge bg-primary">💳 Online Payment</span>
+                                {% elseif reservation.paymentMethod == 'cash' %}
+                                    <span class="badge bg-info">💵 Cash Payment</span>
+                                {% elseif reservation.paymentMethod == 'liquide' %}
                                     <span class="badge bg-info">💵 Cash</span>
                                 {% else %}
-                                    <span class="badge bg-warning">📋 Check</span>
+                                    <span class="badge bg-warning">{{ reservation.paymentMethod }}</span>
                                 {% endif %}
                             </p>
                             <p class="card-text">
-                                <strong>Status:</strong> 
+                                <strong>Status:</strong>
                                 {% if reservation.status == 'confirmed' %}
-                                    <span class="badge bg-success">Confirmed</span>
+                                    <span class="badge bg-success">✓ Confirmed</span>
                                 {% elseif reservation.status == 'pending' %}
-                                    <span class="badge bg-warning">Pending</span>
+                                    <span class="badge bg-warning">⏳ Pending Payment</span>
                                 {% else %}
                                     <span class="badge bg-danger">{{ reservation.status }}</span>
                                 {% endif %}
                             </p>
+                            {% if reservation.status == 'pending' and reservation.paymentMethod == 'online' %}
+                                <div class="alert alert-warning mt-2">
+                                    <small>⚠️ Payment pending. <a href="{{ path('app_online_payment', {'reservationId': reservation.id}) }}" class="alert-link">Complete payment now</a></small>
+                                </div>
+                            {% endif %}
                             <p class="card-text">
                                 <small class="text-muted">Booked on: {{ reservation.createdAt|date('Y-m-d H:i') }}</small>
                             </p>

@@ -21,20 +21,20 @@
                     <form method="POST" action="{{ path('app_confirm_reservation') }}" novalidate>
                         <div class="mb-4">
                             <h5>Choose Payment Method:</h5>
-                            
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="radio" name="payment_method" id="payment_liquide" value="liquide" required>
-                                <label class="form-check-label" for="payment_liquide">
-                                    <strong>💵 Liquide (Cash)</strong>
-                                    <small class="d-block text-muted">Pay in cash at the hotel</small>
+
+                            <div class="form-check mb-3 p-3 border rounded">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_online" value="online" required>
+                                <label class="form-check-label" for="payment_online">
+                                    <strong>💳 Online Payment</strong>
+                                    <small class="d-block text-muted">Pay securely online with credit/debit card</small>
                                 </label>
                             </div>
 
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="radio" name="payment_method" id="payment_cheque" value="cheque" required>
-                                <label class="form-check-label" for="payment_cheque">
-                                    <strong>📋 Chèque (Check)</strong>
-                                    <small class="d-block text-muted">Pay by check</small>
+                            <div class="form-check mb-3 p-3 border rounded">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash" required>
+                                <label class="form-check-label" for="payment_cash">
+                                    <strong>💵 Cash Payment</strong>
+                                    <small class="d-block text-muted">Pay in cash at the hotel upon arrival</small>
                                 </label>
                             </div>
                         </div>

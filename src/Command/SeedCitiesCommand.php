@@ -46,6 +46,11 @@ class SeedCitiesCommand extends Command
                 $hotel->setAddress("Street $i, $cityName, Tunisia");
                 $hotel->setPricePerNight((string)rand(50, 200));
                 $hotel->setAvailableRooms(rand(5, 20));
+
+                // Add random hotel image from Unsplash
+                $randomSeed = md5($cityName . $i);
+                $hotel->setImageUrl("https://source.unsplash.com/800x600/?hotel,luxury,resort&sig={$randomSeed}");
+
                 $hotel->setCity($city);
 
                 $city->addHotel($hotel);
