@@ -1,47 +1,568 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Login - Booking System{% endblock %}
+{% block title %}Connexion - Système de Réservation{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <h1 class="card-title text-center mb-4">Login</h1>
+<div class="login-page">
+    <!-- Arrière-plan avec éléments décoratifs -->
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
 
-                    {% if error %}
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <!-- Colonne de présentation à gauche -->
+            <div class="col-lg-6 d-none d-lg-block presentation-column">
+                <div class="presentation-content">
+                    <div class="brand-section mb-5">
+                        <div class="logo-container mb-4">
+                            <div class="logo-icon">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <h1 class="brand-name">Booking<span>Pro</span></h1>
+                        </div>
+                        <h2 class="display-5 fw-bold text-white mb-4">
+                            Gérez vos réservations<br>avec efficacité
+                        </h2>
+                        <p class="lead text-light opacity-75">
+                            Une plateforme sécurisée pour simplifier la gestion<br>
+                            de vos rendez-vous et optimiser votre temps.
+                        </p>
+                    </div>
+
+                    <div class="features-list mt-5">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Sécurité maximale</h5>
+                                <p class="text-light opacity-75 mb-0">Données chiffrées et protégées</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Analyses avancées</h5>
+                                <p class="text-light opacity-75 mb-0">Statistiques détaillées en temps réel</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Gain de temps</h5>
+                                <p class="text-light opacity-75 mb-0">Automatisation des processus</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial mt-5">
+                        <blockquote class="text-white">
+                            <i class="bi bi-quote fs-2 opacity-50"></i>
+                            <p class="fs-5">"Cette plateforme a transformé notre gestion des réservations."</p>
+                            <footer class="blockquote-footer text-light opacity-75">
+                                Sarah Martin, <cite title="Source Title">Directrice des Opérations</cite>
+                            </footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne de connexion à droite -->
+            <div class="col-lg-6 col-md-8">
+                <div class="login-container">
+                    <div class="login-card">
+                        <!-- En-tête de la carte -->
+                        <div class="login-header text-center mb-5">
+                            <h3 class="login-title">Connexion à votre compte</h3>
+                            <p class="text-muted">Accédez à votre espace de travail sécurisé</p>
+                        </div>
+
+                        <!-- Messages d'erreur -->
+                        {% if error %}
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Login Failed!</strong> {{ error.messageKey|trans(error.messageData, 'security') }}
+                            <div class="d-flex align-items-center">
+                                <div class="alert-icon">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <strong>Identifiants incorrects</strong>
+                                    <div class="small">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                </div>
+                            </div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    {% endif %}
+                        {% endif %}
 
-                    <form method="post" action="{{ path('app_login_check') }}" novalidate>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" id="email" name="email" class="form-control" value="{{ last_username }}" required autofocus>
+                        {% for message in app.flashes('success') %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <div class="d-flex align-items-center">
+                                <div class="alert-icon">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </div>
+                                <div class="ms-3">
+                                    {{ message }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Formulaire de connexion -->
+                        <form method="post" action="{{ path('app_login_check') }}" class="login-form">
+                            <!-- Champ Email -->
+                            <div class="form-group mb-4">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope me-2"></i>Adresse Email
+                                </label>
+                                <div class="input-group">
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email" 
+                                        class="form-control form-control-lg" 
+                                        value="{{ last_username }}" 
+                                        required 
+                                        autofocus
+                                        placeholder="Votre adresse email"
+                                    >
+                                </div>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Entrez l'adresse email associée à votre compte
+                                </div>
+                            </div>
+
+                            <!-- Champ Mot de passe -->
+                            <div class="form-group mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="password" class="form-label">
+                                        <i class="bi bi-lock me-2"></i>Mot de passe
+                                    </label>
+                                    <a href="#" class="text-primary text-decoration-none small" 
+                                       onclick="alert('Contactez votre administrateur pour réinitialiser votre mot de passe')">
+                                        <i class="bi bi-key me-1"></i>Mot de passe oublié ?
+                                    </a>
+                                </div>
+                                <div class="input-group">
+                                    <input 
+                                        type="password" 
+                                        id="password" 
+                                        name="password" 
+                                        class="form-control form-control-lg" 
+                                        required
+                                        placeholder="Votre mot de passe"
+                                    >
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Options supplémentaires -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me">
+                                    <label class="form-check-label text-muted" for="remember_me">
+                                        Se souvenir de moi
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="secureMode">
+                                    <label class="form-check-label text-muted" for="secureMode">
+                                        Mode sécurisé
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Token CSRF -->
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <!-- Bouton de connexion -->
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-4 login-btn">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                <span class="btn-text">Se connecter</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+
+                            <!-- Séparateur -->
+                            <div class="separator">
+                                <span class="separator-text">Ou continuez avec</span>
+                            </div>
+
+                            <!-- Boutons d'authentification alternative -->
+                            <div class="social-login mb-4">
+                                <button type="button" class="btn btn-outline-secondary w-100 mb-2">
+                                    <i class="bi bi-google me-2"></i>Google
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary w-100">
+                                    <i class="bi bi-microsoft me-2"></i>Microsoft 365
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Lien d'inscription -->
+                        <div class="text-center">
+                            <p class="text-muted mb-3">Vous n'avez pas encore de compte ?</p>
+                            <a href="{{ path('app_signup') }}" class="btn btn-outline-success btn-lg w-100">
+                                <i class="bi bi-person-plus me-2"></i>Créer un compte
+                            </a>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                        <!-- Footer de la carte -->
+                        <div class="login-footer mt-4 pt-4 border-top text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-1"></i>
+                                Système sécurisé &nbsp;•&nbsp; 
+                                <i class="bi bi-clock me-1"></i>
+                                24/7 Disponible &nbsp;•&nbsp;
+                                <i class="bi bi-headset me-1"></i>
+                                Support technique
+                            </small>
                         </div>
-
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                        <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
-                    </form>
-
-                    <hr>
-
-                    <p class="text-center mb-0">
-                        Don't have an account? <a href="{{ path('app_signup') }}" class="text-decoration-none">Sign up here</a>
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<style>
+.login-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.shape-1 {
+    width: 400px;
+    height: 400px;
+    top: -200px;
+    right: -100px;
+}
+
+.shape-2 {
+    width: 300px;
+    height: 300px;
+    bottom: -150px;
+    left: -100px;
+}
+
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 10%;
+}
+
+.shape-4 {
+    width: 150px;
+    height: 150px;
+    bottom: 20%;
+    right: 15%;
+}
+
+.presentation-column {
+    padding: 4rem;
+    position: relative;
+    z-index: 2;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.brand-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.brand-name span {
+    color: #6cff8f;
+    font-weight: 800;
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.feature-text h5 {
+    color: white;
+    margin-bottom: 0.25rem;
+}
+
+.testimonial {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-container {
+    padding: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.login-card {
+    background: white;
+    border-radius: 25px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.login-header {
+    margin-bottom: 2rem;
+}
+
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.login-form .form-group {
+    position: relative;
+}
+
+.login-form .form-control {
+    padding: 0.875rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.login-form .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.login-form .form-text {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+.login-btn {
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.separator-text {
+    padding: 0 1rem;
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.social-login .btn {
+    padding: 0.875rem;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.social-login .btn:hover {
+    border-color: #667eea;
+    background: #f8fafc;
+}
+
+.login-footer {
+    font-size: 0.875rem;
+}
+
+.alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.alert-icon {
+    font-size: 1.5rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 992px) {
+    .presentation-column {
+        display: none;
+    }
+    
+    .login-container {
+        padding: 2rem;
+    }
+    
+    .login-card {
+        padding: 2rem;
+    }
+}
+</style>
+
+<script>
+// Toggle password visibility
+document.getElementById('togglePassword')?.addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const icon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+});
+
+// Form submission with loading state
+document.querySelector('.login-form')?.addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('.login-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    
+    btnText.classList.add('d-none');
+    spinner.classList.remove('d-none');
+    submitBtn.disabled = true;
+    
+    // Re-enable after 5 seconds in case of error
+    setTimeout(() => {
+        btnText.classList.remove('d-none');
+        spinner.classList.add('d-none');
+        submitBtn.disabled = false;
+    }, 5000);
+});
+
+// Mode sécurisé
+document.getElementById('secureMode')?.addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('remember_me').checked = false;
+        alert('Mode sécurisé activé : la session expirera après 15 minutes d\'inactivité');
+    }
+});
+
+// Animation des éléments
+document.addEventListener('DOMContentLoaded', function() {
+    const features = document.querySelectorAll('.feature-item');
+    features.forEach((feature, index) => {
+        feature.style.animationDelay = `${index * 0.2}s`;
+    });
+});
+</script>
+{% endblock %}

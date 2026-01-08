@@ -1,57 +1,640 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Dashboard - Select Payment Method{% endblock %}
+{% block title %}Paiement - Système de Réservation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .payment-page {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .payment-header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 2rem;
+        }
+        
+        .reservation-summary {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .summary-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        .summary-total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .payment-option {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .payment-option:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+        
+        .payment-option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+        }
+        
+        .payment-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .payment-online .payment-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .payment-cash .payment-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .payment-details {
+            flex: 1;
+        }
+        
+        .payment-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-description {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .terms-checkbox {
+            margin-top: 1.5rem;
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
+        }
+        
+        .btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .payment-security {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .security-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .security-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step.completed .step-circle {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step.active .step-circle {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        .step.active .step-label {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+        
+        .step-line.completed {
+            background: #10b981;
+        }
+        
+        .hotel-badge {
+            background: #f0f9ff;
+            color: #0369a1;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Style pour les boutons radio cachés mais accessibles */
+        .payment-radio {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        /* Indicateur de sélection */
+        .payment-option::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-option.selected::after {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            box-shadow: inset 0 0 0 3px white;
+        }
+        
+        @media (max-width: 768px) {
+            .payment-option {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .payment-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .security-features {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .progress-steps {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .step-line {
+                display: none;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Select Payment Method</h4>
+<div class="payment-page">
+    <!-- Barre de progression -->
+    <div class="bg-white shadow-sm py-3">
+        <div class="container">
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Ville</div>
                 </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <strong>Hotel:</strong> {{ hotel.name }}<br>
-                        <strong>Check-in:</strong> {{ check_in_date }}<br>
-                        <strong>Check-out:</strong> {{ check_out_date }}<br>
-                        <strong>Price per night:</strong> {{ hotel.pricePerNight }} TND
+                <div class="step-line completed"></div>
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Dates</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Hôtel</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step active">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Paiement</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="payment-card">
+                    <!-- En-tête -->
+                    <div class="payment-header text-center">
+                        <h2 class="mb-3">
+                            <i class="bi bi-credit-card-2-front me-2"></i>
+                            Finalisez votre réservation
+                        </h2>
+                        <p class="mb-0 opacity-90">Choisissez votre méthode de paiement pour confirmer votre séjour</p>
                     </div>
 
-                    <form method="POST" action="{{ path('app_confirm_reservation') }}" novalidate>
-                        <div class="mb-4">
-                            <h5>Choose Payment Method:</h5>
-
-                            <div class="form-check mb-3 p-3 border rounded">
-                                <input class="form-check-input" type="radio" name="payment_method" id="payment_online" value="online" required>
-                                <label class="form-check-label" for="payment_online">
-                                    <strong>💳 Online Payment</strong>
-                                    <small class="d-block text-muted">Pay securely online with credit/debit card</small>
-                                </label>
-                            </div>
-
-                            <div class="form-check mb-3 p-3 border rounded">
-                                <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash" required>
-                                <label class="form-check-label" for="payment_cash">
-                                    <strong>💵 Cash Payment</strong>
-                                    <small class="d-block text-muted">Pay in cash at the hotel upon arrival</small>
-                                </label>
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Badge de l'hôtel -->
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="hotel-badge">
+                                <i class="bi bi-building"></i>
+                                {{ hotel.name }}
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-success w-100">Confirm Reservation</button>
+                        <!-- Résumé de la réservation -->
+                        <div class="reservation-summary">
+                            <h5 class="mb-3">
+                                <i class="bi bi-receipt me-2"></i>
+                                Récapitulatif de votre réservation
+                            </h5>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Hôtel</span>
+                                <span class="summary-value">{{ hotel.name }}</span>
                             </div>
-                            <div class="col-md-6">
-                                <a href="{{ path('app_dashboard') }}" class="btn btn-secondary w-100">Cancel</a>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Adresse</span>
+                                <span class="summary-value">{{ hotel.address }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Arrivée</span>
+                                <span class="summary-value">{{ check_in_date|date('d/m/Y') }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Départ</span>
+                                <span class="summary-value">{{ check_out_date|date('d/m/Y') }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Durée du séjour</span>
+                                <span class="summary-value">
+                                    {% set difference = date(check_out_date).diff(date(check_in_date)) %}
+                                    {{ difference.days }} nuit(s)
+                                </span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Prix par nuit</span>
+                                <span class="summary-value">{{ hotel.pricePerNight }} TND</span>
+                            </div>
+                            
+                            <div class="summary-item summary-total">
+                                <span class="summary-label">Prix total</span>
+                                <span class="summary-value">
+                                    {% set totalPrice = hotel.pricePerNight * (date(check_out_date).diff(date(check_in_date)).days) %}
+                                    {{ totalPrice }} TND
+                                </span>
                             </div>
                         </div>
-                    </form>
+
+                        <!-- Formulaire de paiement -->
+                        <form method="POST" action="{{ path('app_confirm_reservation') }}" id="paymentForm" novalidate>
+                            <!-- Sélection de la méthode de paiement -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-wallet2 me-2"></i>
+                                    Choisissez votre méthode de paiement
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <!-- Paiement en ligne -->
+                                    <div class="col-md-6">
+                                        <div class="payment-option payment-online" onclick="selectPayment('online')">
+                                            <input type="radio" class="payment-radio" name="payment_method" id="payment_online" value="online" required>
+                                            <div class="payment-icon">
+                                                <i class="bi bi-credit-card"></i>
+                                            </div>
+                                            <div class="payment-details">
+                                                <div class="payment-title">Paiement en ligne</div>
+                                                <div class="payment-description">
+                                                    Payez en ligne de manière sécurisée
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Paiement en espèces -->
+                                    <div class="col-md-6">
+                                        <div class="payment-option payment-cash" onclick="selectPayment('cash')">
+                                            <input type="radio" class="payment-radio" name="payment_method" id="payment_cash" value="cash" required>
+                                            <div class="payment-icon">
+                                                <i class="bi bi-cash"></i>
+                                            </div>
+                                            <div class="payment-details">
+                                                <div class="payment-title">Paiement en espèces</div>
+                                                <div class="payment-description">
+                                                    Payez à l'hôtel à votre arrivée
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conditions générales -->
+                            <div class="terms-checkbox">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms_conditions" required>
+                                    <label class="form-check-label text-muted" for="terms_conditions">
+                                        J'accepte les 
+                                        <a href="#" class="text-primary text-decoration-none">conditions générales</a>
+                                        et la 
+                                        <a href="#" class="text-primary text-decoration-none">politique de confidentialité</a>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="row g-3 mt-4">
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-confirm w-100" id="submitBtn">
+                                        <span class="btn-text">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            Confirmer la réservation
+                                        </span>
+                                        <span class="loading-spinner"></span>
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{{ path('app_dashboard') }}" class="btn btn-outline-secondary w-100">
+                                        <i class="bi bi-x-circle me-2"></i>
+                                        Annuler
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Sécurité -->
+                            <div class="payment-security">
+                                <p class="text-center text-muted mb-3">
+                                    <i class="bi bi-lock-fill me-1"></i>
+                                    Paiement 100% sécurisé
+                                </p>
+                                <div class="security-features">
+                                    <div class="security-feature">
+                                        <i class="bi bi-shield-check text-success"></i>
+                                        SSL sécurisé
+                                    </div>
+                                    <div class="security-feature">
+                                        <i class="bi bi-credit-card text-primary"></i>
+                                        Données cryptées
+                                    </div>
+                                    <div class="security-feature">
+                                        <i class="bi bi-headset text-info"></i>
+                                        Support 24/7
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- FAQ de paiement -->
+                <div class="mt-4">
+                    <div class="accordion" id="paymentFAQ">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqContent">
+                                    <i class="bi bi-question-circle me-2"></i>
+                                    Questions fréquentes sur le paiement
+                                </button>
+                            </h2>
+                            <div id="faqContent" class="accordion-collapse collapse" data-bs-parent="#paymentFAQ">
+                                <div class="accordion-body bg-light">
+                                    <div class="faq-item mb-3">
+                                        <h6 class="fw-semibold">Le paiement en espèces est-il sécurisé ?</h6>
+                                        <p class="text-muted small mb-0">Oui, votre réservation est confirmée immédiatement. Vous payez directement à l'hôtel lors de votre arrivée.</p>
+                                    </div>
+                                    <div class="faq-item mb-3">
+                                        <h6 class="fw-semibold">Puis-je annuler ma réservation ?</h6>
+                                        <p class="text-muted small mb-0">Oui, vous pouvez annuler gratuitement jusqu'à 24 heures avant votre arrivée.</p>
+                                    </div>
+                                    <div class="faq-item">
+                                        <h6 class="fw-semibold">Quand serai-je facturé ?</h6>
+                                        <p class="text-muted small mb-0">Pour le paiement en espèces, vous serez facturé à votre arrivée à l'hôtel.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Références aux éléments
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+    const paymentForm = document.getElementById('paymentForm');
+    const termsCheckbox = document.getElementById('terms_conditions');
+    
+    // Fonction pour sélectionner un mode de paiement
+    window.selectPayment = function(method) {
+        // Désélectionner toutes les options
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+            option.querySelector('input[type="radio"]').checked = false;
+        });
+        
+        // Sélectionner l'option choisie
+        const selectedOption = document.querySelector(`.payment-${method}`);
+        if (selectedOption) {
+            selectedOption.classList.add('selected');
+            selectedOption.querySelector('input[type="radio"]').checked = true;
+        }
+        
+        // Valider le formulaire
+        validateForm();
+    };
+    
+    // Validation du formulaire
+    function validateForm() {
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+        const termsAccepted = termsCheckbox?.checked || false;
+        
+        let isValid = true;
+        
+        // Validation de base
+        if (!paymentMethod || !termsAccepted) {
+            isValid = false;
+        }
+        
+        // Activer/désactiver le bouton
+        submitBtn.disabled = !isValid;
+        
+        return isValid;
+    }
+    
+    // Événements de validation en temps réel
+    if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', validateForm);
+    }
+    
+    // Événements pour les boutons radio
+    document.querySelectorAll('.payment-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            validateForm();
+        });
+    });
+    
+    // Soumission du formulaire
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un mode de paiement et accepter les conditions générales.');
+                return;
+            }
+            
+            // Afficher l'état de chargement
+            btnText.classList.add('d-none');
+            loadingSpinner.style.display = 'block';
+            submitBtn.disabled = true;
+            
+            // Réinitialiser après 5 secondes (au cas où)
+            setTimeout(() => {
+                btnText.classList.remove('d-none');
+                loadingSpinner.style.display = 'none';
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+    }
+    
+    // Initialisation
+    validateForm();
+    
+    // Sélectionner automatiquement le premier mode de paiement
+    setTimeout(() => {
+        if (!document.querySelector('input[name="payment_method"]:checked')) {
+            selectPayment('online');
+        }
+    }, 100);
+});
+</script>
+{% endblock %}

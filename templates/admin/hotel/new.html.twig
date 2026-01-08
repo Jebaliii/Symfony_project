@@ -1,11 +1,420 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un Hôtel - SmartStay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --sidebar-bg: #2c3e50;
+            --text-light: #ecf0f1;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+        }
 
-{% block title %}New Hotel{% endblock %}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block body %}
-<h1>Create Hotel</h1>
-{{ form_start(form) }}
-{{ form_widget(form) }}
-<button class="btn btn-primary">Create</button>
-{{ form_end(form) }}
-{% endblock %}
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .form-header-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), #0a58ca);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #0a58ca, #0d47a1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px 24px;
+            background: white;
+            color: #7f8c8d;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-cancel:hover {
+            border-color: #7f8c8d;
+            background: #f8f9fa;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .required-indicator {
+            color: var(--danger-color);
+            margin-left: 4px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .form-field-error {
+            border-color: var(--danger-color) !important;
+        }
+
+        .field-error-text {
+            color: var(--danger-color);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 24px;
+            }
+
+            .form-header h1 {
+                font-size: 22px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-submit,
+            .btn-cancel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- HEADER -->
+        <div class="form-header">
+            <div class="form-header-icon">
+                <i class="bi bi-building"></i>
+            </div>
+            <h1>Créer un Nouvel Hôtel</h1>
+            <p>Remplissez les informations pour ajouter un hôtel à votre plateforme</p>
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="success-message" id="successMessage">
+            <i class="bi bi-check-circle"></i>
+            <span>Hôtel créé avec succès!</span>
+        </div>
+        <div class="error-message" id="errorMessage">
+            <i class="bi bi-exclamation-circle"></i>
+            <span id="errorText">Une erreur est survenue</span>
+        </div>
+
+        <!-- FORM -->
+        <form id="hotelForm" method="POST" onsubmit="handleSubmit(event)">
+            <!-- Nom de l'hôtel -->
+            <div class="form-group">
+                <label class="form-label">Nom de l'Hôtel <span class="required-indicator">*</span></label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Hotel Luxury Palace" required>
+                <small class="form-text">Entrez le nom complet de votre hôtel</small>
+            </div>
+
+            <!-- Localisation -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Ville <span class="required-indicator">*</span></label>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="Ex: Tunis" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pays <span class="required-indicator">*</span></label>
+                    <input type="text" class="form-control" id="country" name="country" placeholder="Ex: Tunisie" required>
+                </div>
+            </div>
+
+            <!-- Adresse -->
+            <div class="form-group">
+                <label class="form-label">Adresse <span class="required-indicator">*</span></label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Rue, numéro..." required>
+            </div>
+
+            <!-- Nombre de chambres -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Nombre de Chambres <span class="required-indicator">*</span></label>
+                    <input type="number" class="form-control" id="rooms" name="rooms" min="1" placeholder="Ex: 50" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nombre d'Étoiles <span class="required-indicator">*</span></label>
+                    <select class="form-control" id="stars" name="stars" required>
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="1">1 Étoile</option>
+                        <option value="2">2 Étoiles</option>
+                        <option value="3">3 Étoiles</option>
+                        <option value="4">4 Étoiles</option>
+                        <option value="5">5 Étoiles</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label class="form-label">Description <span class="required-indicator">*</span></label>
+                <textarea class="form-control" id="description" name="description" placeholder="Décrivez votre hôtel..." required></textarea>
+                <small class="form-text">Minimum 20 caractères</small>
+            </div>
+
+            <!-- Prix par nuit -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Prix par Nuit (TND) <span class="required-indicator">*</span></label>
+                    <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" placeholder="Ex: 150.00" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Téléphone <span class="required-indicator">*</span></label>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+216 XX XXX XXX" required>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label">Email <span class="required-indicator">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="contact@hotel.tn" required>
+            </div>
+
+            <!-- Équipements -->
+            <div class="form-group">
+                <label class="form-label">Équipements Disponibles</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="wifi" name="amenities" value="wifi">
+                        <label style="margin: 0; cursor: pointer;" for="wifi">WiFi Gratuit</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="parking" name="amenities" value="parking">
+                        <label style="margin: 0; cursor: pointer;" for="parking">Parking</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="pool" name="amenities" value="pool">
+                        <label style="margin: 0; cursor: pointer;" for="pool">Piscine</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="gym" name="amenities" value="gym">
+                        <label style="margin: 0; cursor: pointer;" for="gym">Salle de Sport</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="button-group">
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-check-lg"></i> Créer l'Hôtel
+                </button>
+                <a href="javascript:window.history.back()" class="btn-cancel">
+                    <i class="bi bi-x-lg"></i> Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            // Validation simple
+            const form = document.getElementById('hotelForm');
+            const formData = new FormData(form);
+            const name = formData.get('name');
+            const description = formData.get('description');
+
+            // Validation longueur description
+            if (description.length < 20) {
+                showError('La description doit contenir au moins 20 caractères');
+                return;
+            }
+
+            // Ici tu enverrais les données au serveur avec fetch()
+            // Pour la démo, on affiche le message de succès
+            showSuccess();
+            
+            // Réinitialiser le formulaire après 2 secondes
+            setTimeout(() => {
+                form.reset();
+                window.location.href = 'javascript:window.history.back()';
+            }, 2000);
+        }
+
+        function showSuccess() {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorMsg.classList.add('show');
+            setTimeout(() => {
+                errorMsg.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

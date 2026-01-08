@@ -1,11 +1,477 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SmartStay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --sidebar-bg: #2c3e50;
+            --text-light: #ecf0f1;
+            --card-bg: #ffffff;
+            --hover-color: #34495e;
+        }
 
-{% block title %}Admin Dashboard{% endblock %}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block body %}
-<h1>Admin Dashboard</h1>
-<div class="list-group">
-    <a href="{{ path('admin_hotel_index') }}" class="list-group-item list-group-item-action">Hotels</a>
-    <a href="{{ path('admin_reservation_index') }}" class="list-group-item list-group-item-action">Reservations</a>
-</div>
-{% endblock %}
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: var(--text-light);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .sidebar-brand i {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: var(--hover-color);
+            transform: translateX(5px);
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .top-header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .top-header p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .badge-brand {
+            background: linear-gradient(135deg, var(--primary-color), #0a58ca);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== CARDS GRID ===== */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card-item {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .card-icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary-card {
+            background: linear-gradient(135deg, var(--primary-color), #0a58ca);
+            color: white;
+        }
+
+        .btn-primary-card:hover {
+            background: linear-gradient(135deg, #0a58ca, #0d47a1);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-outline-card {
+            background: white;
+            color: var(--primary-color);
+            border: 1.5px solid var(--primary-color);
+        }
+
+        .btn-outline-card:hover {
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* ===== STATS SECTION ===== */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header-info {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-header h1 {
+                font-size: 20px;
+            }
+
+            .card-item {
+                padding: 16px;
+            }
+
+            .btn-card {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-house-check"></i>
+                <span>SmartStay</span>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="#hotels" onclick="scrollToSection('hotels'); return false;">
+                        <i class="bi bi-building"></i>
+                        <span>Hôtels</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#reservations" onclick="scrollToSection('reservations'); return false;">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Réservations</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#settings" onclick="scrollToSection('settings'); return false;">
+                        <i class="bi bi-gear"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TOP HEADER -->
+            <div class="top-header">
+                <div>
+                    <h1>Tableau de Bord Admin</h1>
+                    <p>Bienvenue sur votre espace de gestion SmartStay</p>
+                </div>
+                <div class="header-info">
+                    <span class="badge-brand">ADMIN PANEL v1.0</span>
+                </div>
+            </div>
+
+            <!-- STATS SECTION -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="stat-label">Total Hôtels</div>
+                    <div class="stat-value">24</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="stat-label">Réservations Actives</div>
+                    <div class="stat-value">156</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <div class="stat-label">Taux d'Occupation</div>
+                    <div class="stat-value">78%</div>
+                </div>
+            </div>
+
+            <!-- MANAGEMENT CARDS -->
+            <div id="hotels" class="cards-container">
+                <!-- HOTELS CARD -->
+                <div class="card-item">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Gestion des Hôtels</h3>
+                            <p class="card-desc">Consultez, créez, modifiez et supprimez les hôtels de votre plateforme.</p>
+                        </div>
+                        <div class="card-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('admin_hotel_index') }}" class="btn-card btn-primary-card">
+                            <i class="bi bi-arrow-right"></i> Gérer
+                        </a>
+                        <a href="{{ path('admin_hotel_new') }}" class="btn-card btn-outline-card">
+                            <i class="bi bi-plus"></i> Ajouter
+                        </a>
+                    </div>
+                </div>
+
+                <!-- RESERVATIONS CARD -->
+                <div class="card-item">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Gestion des Réservations</h3>
+                            <p class="card-desc">Suivez, validez et gérez toutes les réservations clients en temps réel.</p>
+                        </div>
+                        <div class="card-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('admin_reservation_index') }}" class="btn-card btn-primary-card">
+                            <i class="bi bi-arrow-right"></i> Gérer
+                        </a>
+                        <a href="{{ path('admin_reservation_new') }}" class="btn-card btn-outline-card">
+                            <i class="bi bi-hourglass"></i> Nouvelle
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ANALYTICS CARD -->
+                <div class="card-item">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Rapports & Statistiques</h3>
+                            <p class="card-desc">Visualisez les tendances et métriques de votre plateforme.</p>
+                        </div>
+                        <div class="card-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://example.com/admin/analytics" class="btn-card btn-primary-card">
+                            <i class="bi bi-bar-chart"></i> Rapports
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="footer">
+                <p>&copy; 2026 SmartStay Admin Dashboard | Tous droits réservés</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
+</body>
+</html>

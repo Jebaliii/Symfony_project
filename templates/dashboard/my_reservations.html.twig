@@ -1,90 +1,918 @@
 {% extends "base.html.twig" %}
 
-{% block title %}My Reservations{% endblock %}
+{% block title %}Mes Réservations - Système de Réservation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .reservations-page {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .reservations-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 3rem 0;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+        }
+        
+        .stats-cards {
+            margin-bottom: 2.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-total .stat-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .stat-confirmed .stat-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .stat-pending .stat-icon {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .reservation-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+        }
+        
+        .reservation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .reservation-header {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .hotel-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .hotel-location {
+            color: #64748b;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .reservation-body {
+            padding: 1.5rem;
+        }
+        
+        .reservation-details {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #1e293b;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .payment-method-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-online {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .badge-cash {
+            background: #dcfce7;
+            color: #059669;
+        }
+        
+        .badge-liquide {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-confirmed {
+            background: #dcfce7;
+            color: #059669;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .reservation-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-pay {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+        }
+        
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+        
+        .btn-view:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-cancel {
+            background: white;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+        }
+        
+        .btn-cancel:hover {
+            background: #fef2f2;
+            border-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-description {
+            color: #94a3b8;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn-start-booking {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-start-booking:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .filters-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .filter-option {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-option:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .filter-option.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: white;
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .reservation-date {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .total-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+            margin-top: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 2rem 0;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .filter-options {
+                flex-direction: column;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mb-4">My Reservations</h1>
-        </div>
-    </div>
-
-    {% if reservations|length > 0 %}
-        <div class="row">
-            {% for reservation in reservations %}
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h5 class="mb-0">{{ reservation.hotel.name }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                <strong>City:</strong> {{ reservation.hotel.city.name }}
-                            </p>
-                            <p class="card-text">
-                                <strong>Address:</strong> {{ reservation.hotel.address }}
-                            </p>
-                            <p class="card-text">
-                                <strong>Check-in:</strong> {{ reservation.checkInDate|date('Y-m-d') }}
-                            </p>
-                            <p class="card-text">
-                                <strong>Check-out:</strong> {{ reservation.checkOutDate|date('Y-m-d') }}
-                            </p>
-                            <p class="card-text">
-                                <strong>Price per night:</strong> {{ reservation.hotel.pricePerNight }} TND
-                            </p>
-                            <p class="card-text">
-                                <strong>Payment Method:</strong>
-                                {% if reservation.paymentMethod == 'online' %}
-                                    <span class="badge bg-primary">💳 Online Payment</span>
-                                {% elseif reservation.paymentMethod == 'cash' %}
-                                    <span class="badge bg-info">💵 Cash Payment</span>
-                                {% elseif reservation.paymentMethod == 'liquide' %}
-                                    <span class="badge bg-info">💵 Cash</span>
-                                {% else %}
-                                    <span class="badge bg-warning">{{ reservation.paymentMethod }}</span>
-                                {% endif %}
-                            </p>
-                            <p class="card-text">
-                                <strong>Status:</strong>
-                                {% if reservation.status == 'confirmed' %}
-                                    <span class="badge bg-success">✓ Confirmed</span>
-                                {% elseif reservation.status == 'pending' %}
-                                    <span class="badge bg-warning">⏳ Pending Payment</span>
-                                {% else %}
-                                    <span class="badge bg-danger">{{ reservation.status }}</span>
-                                {% endif %}
-                            </p>
-                            {% if reservation.status == 'pending' and reservation.paymentMethod == 'online' %}
-                                <div class="alert alert-warning mt-2">
-                                    <small>⚠️ Payment pending. <a href="{{ path('app_online_payment', {'reservationId': reservation.id}) }}" class="alert-link">Complete payment now</a></small>
-                                </div>
-                            {% endif %}
-                            <p class="card-text">
-                                <small class="text-muted">Booked on: {{ reservation.createdAt|date('Y-m-d H:i') }}</small>
-                            </p>
-                        </div>
-                    </div>
+<div class="reservations-page">
+    <!-- En-tête de page -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-3">
+                        <i class="bi bi-calendar-check me-2"></i>
+                        Mes Réservations
+                    </h1>
+                    <p class="lead mb-0 opacity-90">
+                        Consultez et gérez toutes vos réservations en un seul endroit
+                    </p>
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="row">
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    <p>You don't have any reservations yet.</p>
-                    <a href="{{ path('app_dashboard') }}" class="btn btn-primary">Start Booking Now</a>
+                <div class="col-md-4 text-md-end">
+                    <a href="{{ path('app_dashboard') }}" class="btn btn-outline-light">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Nouvelle réservation
+                    </a>
                 </div>
             </div>
         </div>
-    {% endif %}
+    </div>
 
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    <div class="container">
+        <!-- Statistiques -->
+        <div class="row stats-cards">
+            {% set confirmedCount = 0 %}
+            {% set pendingCount = 0 %}
+            
+            {% for reservation in reservations %}
+                {% if reservation.status == 'confirmed' %}
+                    {% set confirmedCount = confirmedCount + 1 %}
+                {% elseif reservation.status == 'pending' %}
+                    {% set pendingCount = pendingCount + 1 %}
+                {% endif %}
+            {% endfor %}
+            
+            <div class="col-md-4 mb-3">
+                <div class="stat-card stat-total">
+                    <div class="stat-icon">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <div class="stat-value">{{ reservations|length }}</div>
+                    <div class="stat-label">Réservations totales</div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="stat-card stat-confirmed">
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-value">{{ confirmedCount }}</div>
+                    <div class="stat-label">Réservations confirmées</div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="stat-card stat-pending">
+                    <div class="stat-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="stat-value">{{ pendingCount }}</div>
+                    <div class="stat-label">En attente de paiement</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres et recherche -->
+        <div class="filters-section">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-funnel me-1"></i>
+                            Filtrer par statut
+                        </label>
+                        <div class="filter-options">
+                            <button class="filter-option active" data-filter="all">
+                                Toutes ({{ reservations|length }})
+                            </button>
+                            <button class="filter-option" data-filter="confirmed">
+                                Confirmées ({{ confirmedCount }})
+                            </button>
+                            <button class="filter-option" data-filter="pending">
+                                En attente ({{ pendingCount }})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un hôtel ou une ville...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des réservations -->
+        {% if reservations|length > 0 %}
+            <div class="row" id="reservationsList">
+                {% for reservation in reservations %}
+                    {% set totalPrice = reservation.hotel.pricePerNight * (reservation.checkOutDate.diff(reservation.checkInDate).days) %}
+                    
+                    <div class="col-lg-6 mb-4 reservation-item" 
+                         data-status="{{ reservation.status }}"
+                         data-hotel="{{ reservation.hotel.name|lower }}"
+                         data-city="{{ reservation.hotel.city.name|lower }}">
+                        <div class="reservation-card">
+                            <!-- En-tête de la réservation -->
+                            <div class="reservation-header">
+                                <h3 class="hotel-name">
+                                    <i class="bi bi-building"></i>
+                                    {{ reservation.hotel.name }}
+                                </h3>
+                                <div class="hotel-location">
+                                    <i class="bi bi-geo-alt"></i>
+                                    {{ reservation.hotel.city.name }}, {{ reservation.hotel.address }}
+                                </div>
+                                
+                                <!-- Badge de statut -->
+                                <span class="status-badge status-{{ reservation.status }}">
+                                    {% if reservation.status == 'confirmed' %}
+                                        <i class="bi bi-check-circle me-1"></i>Confirmée
+                                    {% elseif reservation.status == 'pending' %}
+                                        <i class="bi bi-clock me-1"></i>En attente
+                                    {% else %}
+                                        {{ reservation.status }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <!-- Corps de la réservation -->
+                            <div class="reservation-body">
+                                <div class="reservation-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Arrivée</span>
+                                        <span class="detail-value">
+                                            <i class="bi bi-calendar-check me-1"></i>
+                                            {{ reservation.checkInDate|date('d/m/Y') }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Départ</span>
+                                        <span class="detail-value">
+                                            <i class="bi bi-calendar-x me-1"></i>
+                                            {{ reservation.checkOutDate|date('d/m/Y') }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Durée</span>
+                                        <span class="detail-value">
+                                            {% set difference = reservation.checkOutDate.diff(reservation.checkInDate) %}
+                                            {{ difference.days }} nuit(s)
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Prix par nuit</span>
+                                        <span class="detail-value">{{ reservation.hotel.pricePerNight }} TND</span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Méthode de paiement</span>
+                                        <span class="detail-value">
+                                            {% if reservation.paymentMethod == 'online' %}
+                                                <span class="payment-method-badge badge-online">
+                                                    <i class="bi bi-credit-card"></i>
+                                                    En ligne
+                                                </span>
+                                            {% elseif reservation.paymentMethod == 'cash' %}
+                                                <span class="payment-method-badge badge-cash">
+                                                    <i class="bi bi-cash"></i>
+                                                    Espèces
+                                                </span>
+                                            {% elseif reservation.paymentMethod == 'liquide' %}
+                                                <span class="payment-method-badge badge-liquide">
+                                                    <i class="bi bi-wallet"></i>
+                                                    Liquide
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ reservation.paymentMethod }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Montant total</span>
+                                        <span class="detail-value total-price">{{ totalPrice }} TND</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pied de page de la réservation -->
+                            <div class="reservation-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="reservation-date">
+                                        <i class="bi bi-clock-history"></i>
+                                        Réservée le {{ reservation.createdAt|date('d/m/Y à H:i') }}
+                                    </div>
+                                    
+                                    <div class="action-buttons">
+                                        {% if reservation.status == 'pending' and reservation.paymentMethod == 'online' %}
+                                            <a href="{{ path('app_online_payment', {'reservationId': reservation.id}) }}" 
+                                               class="btn-action btn-pay">
+                                                <i class="bi bi-credit-card"></i>
+                                                Payer
+                                            </a>
+                                        {% endif %}
+                                        
+                                        <button class="btn-action btn-view" onclick="viewReservationDetails({{ reservation.id }})">
+                                            <i class="bi bi-eye"></i>
+                                            Détails
+                                        </button>
+                                        
+                                        {% if reservation.status != 'cancelled' %}
+                                            <button class="btn-action btn-cancel" onclick="cancelReservation({{ reservation.id }})">
+                                                <i class="bi bi-x-circle"></i>
+                                                Annuler
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination (optionnelle) -->
+            {% if reservations|length > 6 %}
+            <nav aria-label="Navigation des réservations" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+            
+        {% else %}
+            <!-- État vide -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+                <h2 class="empty-title">Aucune réservation trouvée</h2>
+                <p class="empty-description">
+                    Vous n'avez pas encore effectué de réservation. Commencez votre première réservation dès maintenant et découvrez nos meilleurs hôtels.
+                </p>
+                <a href="{{ path('app_dashboard') }}" class="btn btn-start-booking">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Commencer une réservation
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- Bouton de retour -->
+        <div class="text-center mt-5 mb-5">
+            <a href="{{ path('app_dashboard') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-2"></i>
+                Retour au tableau de bord
+            </a>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<!-- Modal de détails -->
+<div class="modal fade" id="reservationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Détails de la réservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Contenu chargé dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="printReservation">
+                    <i class="bi bi-printer me-2"></i>Imprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filtrage des réservations
+    const filterOptions = document.querySelectorAll('.filter-option');
+    const searchInput = document.getElementById('searchInput');
+    const reservationItems = document.querySelectorAll('.reservation-item');
+    
+    // Fonction de filtrage
+    function filterReservations() {
+        const activeFilter = document.querySelector('.filter-option.active').dataset.filter;
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        reservationItems.forEach(item => {
+            const status = item.dataset.status;
+            const hotel = item.dataset.hotel;
+            const city = item.dataset.city;
+            
+            let shouldShow = true;
+            
+            // Filtre par statut
+            if (activeFilter !== 'all' && status !== activeFilter) {
+                shouldShow = false;
+            }
+            
+            // Filtre par recherche
+            if (searchTerm && !hotel.includes(searchTerm) && !city.includes(searchTerm)) {
+                shouldShow = false;
+            }
+            
+            // Afficher/masquer
+            if (shouldShow) {
+                item.style.display = 'block';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
+        
+        // Vérifier s'il y a des résultats
+        const visibleItems = document.querySelectorAll('.reservation-item[style*="display: block"]');
+        if (visibleItems.length === 0 && reservationItems.length > 0) {
+            showNoResults();
+        } else {
+            hideNoResults();
+        }
+    }
+    
+    // Gestion des filtres
+    filterOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            filterOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            filterReservations();
+        });
+    });
+    
+    // Recherche en temps réel
+    searchInput.addEventListener('input', filterReservations);
+    
+    // Animation des cartes
+    reservationItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Fonctions auxiliaires pour les messages d'erreur
+    function showNoResults() {
+        let noResults = document.getElementById('noResults');
+        if (!noResults) {
+            noResults = document.createElement('div');
+            noResults.id = 'noResults';
+            noResults.className = 'empty-state';
+            noResults.innerHTML = `
+                <div class="empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h2 class="empty-title">Aucun résultat trouvé</h2>
+                <p class="empty-description">
+                    Aucune réservation ne correspond à vos critères de recherche. Essayez de modifier vos filtres.
+                </p>
+            `;
+            document.getElementById('reservationsList').appendChild(noResults);
+        }
+    }
+    
+    function hideNoResults() {
+        const noResults = document.getElementById('noResults');
+        if (noResults) {
+            noResults.remove();
+        }
+    }
+    
+    // Initialisation
+    filterReservations();
+});
+
+// Fonction pour afficher les détails d'une réservation
+function viewReservationDetails(reservationId) {
+    // Ici, vous pourriez faire un appel AJAX pour récupérer les détails complets
+    // Pour l'instant, nous allons simplement afficher un message
+    const modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p>Chargement des détails de la réservation...</p>
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('reservationModal'));
+    modal.show();
+    
+    // Simulation de chargement
+    setTimeout(() => {
+        modalBody.innerHTML = `
+            <div class="reservation-details-modal">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Les détails complets de la réservation seraient chargés ici.
+                </div>
+                <p>Vous pourriez afficher ici :</p>
+                <ul>
+                    <li>Les détails compplets de l'hôtel</li>
+                    <li>Les informations de contact</li>
+                    <li>L'historique des paiements</li>
+                    <li>Les conditions d'annulation</li>
+                    <li>Les coordonnées de l'hôtel</li>
+                </ul>
+            </div>
+        `;
+    }, 1000);
+}
+
+// Fonction pour annuler une réservation
+function cancelReservation(reservationId) {
+    if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible.')) {
+        // Ici, vous feriez un appel AJAX pour annuler la réservation
+        // Pour l'instant, nous allons simplement afficher un message
+        const reservationCard = document.querySelector(`[data-reservation-id="${reservationId}"]`);
+        
+        // Afficher un indicateur de chargement
+        const originalContent = reservationCard.innerHTML;
+        reservationCard.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-danger" role="status">
+                    <span class="visually-hidden">Annulation en cours...</span>
+                </div>
+                <p class="mt-2">Annulation en cours...</p>
+            </div>
+        `;
+        
+        // Simulation d'annulation
+        setTimeout(() => {
+            reservationCard.innerHTML = originalContent;
+            alert('La réservation a été annulée avec succès. (simulation)');
+            
+            // Ici, vous pourriez rafraîchir la page ou mettre à jour la carte
+            // window.location.reload();
+        }, 1500);
+    }
+}
+
+// Gestion de l'impression
+document.getElementById('printReservation')?.addEventListener('click', function() {
+    window.print();
+});
+</script>
+{% endblock %}

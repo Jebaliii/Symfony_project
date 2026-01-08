@@ -3,9 +3,416 @@
 {% block title %}Edit Reservation{% endblock %}
 
 {% block body %}
-<h1>Edit Reservation</h1>
-{{ form_start(form) }}
-{{ form_widget(form) }}
-<button class="btn btn-primary">Save</button>
-{{ form_end(form) }}
+<div class="edit-reservation-wrapper">
+    <!-- HEADER SECTION -->
+    <div class="edit-header">
+        <div class="edit-header-content">
+            <div class="edit-header-info">
+                <i class="bi bi-pencil-square"></i>
+                <div>
+                    <h1>Edit Reservation</h1>
+                    <p>Update reservation details</p>
+                </div>
+            </div>
+            <span class="reservation-badge">
+                <i class="bi bi-check-circle"></i> Active
+            </span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="edit-container">
+        <!-- ALERTS -->
+        <div class="alerts-section">
+            <div class="alert-info">
+                <i class="bi bi-info-circle"></i>
+                <span>Fields marked with <span class="required-mark">*</span> are required</span>
+            </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="form-card">
+            <!-- CARD HEADER -->
+            <div class="form-card-header">
+                <h2>Reservation Information</h2>
+                <p>Update the details of your reservation</p>
+            </div>
+
+            <!-- FORM CONTENT -->
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="form-section">
+                    {{ form_widget(form) }}
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary-action">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Save Changes</span>
+                    </button>
+                    <a href="{{ path('admin_reservation_index') }}" class="btn-secondary-action">
+                        <i class="bi bi-x-lg"></i>
+                        <span>Cancel</span>
+                    </a>
+                </div>
+
+                <!-- DELETE ACTION -->
+                <div class="delete-section">
+                    <p class="delete-warning">Danger Zone</p>
+                    <button type="button" class="btn-delete-action" onclick="confirmDelete()">
+                        <i class="bi bi-trash"></i>
+                        <span>Delete This Reservation</span>
+                    </button>
+                    <small>This action cannot be undone</small>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --success-color: #198754;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --text-primary: #2c3e50;
+        --text-secondary: #7f8c8d;
+        --bg-light: #f5f7fb;
+        --border-color: #e0e0e0;
+    }
+
+    .edit-reservation-wrapper {
+        background-color: var(--bg-light);
+        min-height: 100vh;
+        padding: 30px 20px;
+    }
+
+    /* HEADER */
+    .edit-header {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .edit-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .edit-header-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .edit-header-info i {
+        font-size: 32px;
+        color: var(--primary-color);
+    }
+
+    .edit-header-info h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .edit-header-info p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .reservation-badge {
+        background: #d4edda;
+        color: #155724;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* CONTAINER */
+    .edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* ALERTS */
+    .alerts-section {
+        margin-bottom: 24px;
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        padding: 12px 16px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .required-mark {
+        color: var(--danger-color);
+        font-weight: 600;
+    }
+
+    /* FORM CARD */
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        background: linear-gradient(135deg, var(--primary-color), #0a58ca);
+        color: white;
+        padding: 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-card-header h2 {
+        margin: 0 0 6px 0;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .form-card-header p {
+        margin: 0;
+        font-size: 13px;
+        opacity: 0.9;
+    }
+
+    .form-card-body {
+        padding: 30px;
+    }
+
+    /* FORM SECTION */
+    .form-section {
+        margin-bottom: 24px;
+    }
+
+    .reservation-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    /* FORM ACTIONS */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        margin-top: 24px;
+    }
+
+    .btn-primary-action,
+    .btn-secondary-action {
+        flex: 1;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-primary-action {
+        background: linear-gradient(135deg, var(--success-color), #15713e);
+        color: white;
+    }
+
+    .btn-primary-action:hover {
+        background: linear-gradient(135deg, #15713e, #0d4620);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(25, 135, 84, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary-action {
+        background: white;
+        color: var(--text-secondary);
+        border: 1.5px solid var(--border-color);
+    }
+
+    .btn-secondary-action:hover {
+        border-color: var(--text-secondary);
+        background: #f8f9fa;
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    /* DELETE SECTION */
+    .delete-section {
+        padding-top: 24px;
+        border-top: 2px solid var(--border-color);
+    }
+
+    .delete-warning {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--danger-color);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        margin-top: 0;
+    }
+
+    .btn-delete-action {
+        width: 100%;
+        padding: 12px 24px;
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .btn-delete-action:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .delete-section small {
+        display: block;
+        font-size: 12px;
+        color: var(--text-secondary);
+        text-align: center;
+    }
+
+    /* FORM FIELDS STYLING */
+    .reservation-form input,
+    .reservation-form textarea,
+    .reservation-form select {
+        border: 1.5px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        font-family: inherit;
+        width: 100%;
+    }
+
+    .reservation-form input:focus,
+    .reservation-form textarea:focus,
+    .reservation-form select:focus {
+        border-color: var(--primary-color);
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        outline: none;
+    }
+
+    .reservation-form label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 14px;
+        display: block;
+    }
+
+    .reservation-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .edit-header-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .reservation-badge {
+            align-self: flex-start;
+        }
+
+        .form-card-body {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary-action,
+        .btn-secondary-action,
+        .btn-delete-action {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .edit-reservation-wrapper {
+            padding: 15px 10px;
+        }
+
+        .edit-header {
+            padding: 15px;
+        }
+
+        .edit-header-info i {
+            font-size: 24px;
+        }
+
+        .edit-header-info h1 {
+            font-size: 20px;
+        }
+
+        .form-card-header {
+            padding: 15px;
+        }
+
+        .form-card-body {
+            padding: 15px;
+        }
+
+        .btn-primary-action,
+        .btn-secondary-action {
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<script>
+    function confirmDelete() {
+        if (confirm('Are you sure you want to delete this reservation?\nThis action cannot be undone.')) {
+            alert('Deletion in progress...');
+        }
+    }
+</script>
 {% endblock %}

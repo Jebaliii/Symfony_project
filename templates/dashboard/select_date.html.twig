@@ -1,53 +1,902 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Dashboard - Select Dates{% endblock %}
+{% block title %}Sélection des Dates - Système de Réservation{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Select Check-in and Check-out Dates</h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <strong>Selected City:</strong> {{ city.name }}
+<div class="dates-page">
+    <!-- Arrière-plan avec éléments décoratifs -->
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <!-- Colonne de présentation à gauche -->
+            <div class="col-lg-6 d-none d-lg-block presentation-column">
+                <div class="presentation-content">
+                    <div class="brand-section mb-5">
+                        <div class="logo-container mb-4">
+                            <div class="logo-icon">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <h1 class="brand-name">Booking<span>Pro</span></h1>
+                        </div>
+                        <h2 class="display-5 fw-bold text-white mb-4">
+                            Réservez votre séjour à<br>{{ city.name }}
+                        </h2>
+                        <p class="lead text-light opacity-75">
+                            Choisissez vos dates et découvrez les meilleurs hôtels<br>
+                            disponibles pour votre séjour.
+                        </p>
                     </div>
 
-                    <form method="POST" action="{{ path('app_select_date') }}" novalidate>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="check_in_date" class="form-label">Check-in Date</label>
-                                <input type="date" id="check_in_date" name="check_in_date" class="form-control" required min="{{ 'now'|date('Y-m-d') }}">
+                    <!-- Info sur la ville -->
+                    <div class="city-info-card mb-5">
+                        <div class="card border-0 bg-light bg-opacity-10 backdrop-blur">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="city-icon me-3">
+                                        <i class="bi bi-geo-alt-fill text-white fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-white mb-1">Destination sélectionnée</h5>
+                                        <h3 class="text-white fw-bold">{{ city.name }}</h3>
+                                    </div>
+                                </div>
+                                <div class="city-details">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="detail-item mb-3">
+                                                <i class="bi bi-thermometer-sun text-warning me-2"></i>
+                                                <span class="text-light">Climat favorable</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="detail-item mb-3">
+                                                <i class="bi bi-currency-euro text-success me-2"></i>
+                                                <span class="text-light">Prix compétitifs</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="detail-item mb-3">
+                                                <i class="bi bi-star-fill text-warning me-2"></i>
+                                                <span class="text-light">Hôtels 4-5 étoiles</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="detail-item mb-3">
+                                                <i class="bi bi-wifi text-info me-2"></i>
+                                                <span class="text-light">WiFi gratuit</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="check_out_date" class="form-label">Check-out Date</label>
-                                <input type="date" id="check_out_date" name="check_out_date" class="form-control" required min="{{ 'now'|date('Y-m-d') }}">
+                        </div>
+                    </div>
+
+                    <!-- Avantages -->
+                    <div class="benefits-list">
+                        <h5 class="text-white mb-4"><i class="bi bi-check-circle-fill text-success me-2"></i>Pourquoi réserver maintenant ?</h5>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h6 class="text-white mb-1">Meilleur prix garanti</h6>
+                                <p class="text-light opacity-75 mb-0">Réservez aujourd'hui et économisez jusqu'à 30%</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h6 class="text-white mb-1">Annulation gratuite</h6>
+                                <p class="text-light opacity-75 mb-0">Annulez jusqu'à 24h avant votre arrivée</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="bi bi-award"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h6 class="text-white mb-1">Service premium</h6>
+                                <p class="text-light opacity-75 mb-0">Assistance 24/7 pendant votre séjour</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne de sélection des dates à droite -->
+            <div class="col-lg-6 col-md-8">
+                <div class="dates-container">
+                    <div class="dates-card">
+                        <!-- En-tête de la carte -->
+                        <div class="dates-header text-center mb-5">
+                            <h3 class="dates-title">Sélectionnez vos dates</h3>
+                            <p class="text-muted">Choisissez vos dates d'arrivée et de départ</p>
+                            <div class="booking-progress">
+                                <div class="progress-steps">
+                                    <div class="step active">
+                                        <div class="step-circle">1</div>
+                                        <div class="step-label">Ville</div>
+                                    </div>
+                                    <div class="step-line active"></div>
+                                    <div class="step active">
+                                        <div class="step-circle">2</div>
+                                        <div class="step-label">Dates</div>
+                                    </div>
+                                    <div class="step-line"></div>
+                                    <div class="step">
+                                        <div class="step-circle">3</div>
+                                        <div class="step-label">Hôtel</div>
+                                    </div>
+                                    <div class="step-line"></div>
+                                    <div class="step">
+                                        <div class="step-circle">4</div>
+                                        <div class="step-label">Confirmation</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary w-100">Find Available Hotels</button>
+                        <!-- Indicateur de ville sélectionnée -->
+                        <div class="selected-city-indicator mb-4">
+                            <div class="alert alert-primary border-0 bg-light" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <div class="alert-icon me-3">
+                                        <i class="bi bi-geo-alt-fill text-primary fs-4"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h5 class="alert-heading mb-1">Destination : {{ city.name }}</h5>
+                                        <p class="mb-0 text-muted">Vous êtes à une étape de trouver l'hôtel parfait pour votre séjour</p>
+                                    </div>
+                                    <div class="city-badge">
+                                        <span class="badge bg-primary">Sélectionné</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </form>
 
-                    <hr>
+                        <!-- Formulaire de sélection des dates -->
+                        <form method="POST" action="{{ path('app_select_date') }}" class="dates-form" id="datesForm">
+                            <div class="row g-4">
+                                <!-- Date d'arrivée -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="form-label-wrapper">
+                                            <label for="check_in_date" class="form-label fw-semibold">
+                                                <i class="bi bi-calendar-plus me-2"></i>Date d'arrivée
+                                            </label>
+                                            <span class="required-badge">Requis</span>
+                                        </div>
+                                        <div class="input-group date-input-group">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                <i class="bi bi-box-arrow-in-right text-muted"></i>
+                                            </span>
+                                            <input type="date" 
+                                                   id="check_in_date" 
+                                                   name="check_in_date" 
+                                                   class="form-control form-control-lg date-picker" 
+                                                   required 
+                                                   min="{{ 'now'|date('Y-m-d') }}"
+                                                   value="{{ app.request.query.get('check_in_date', '') }}">
+                                            <div class="input-group-text date-preview border-start-0">
+                                                <span id="checkInPreview">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Sélectionnez votre date d'arrivée
+                                        </div>
+                                        <div class="date-suggestions mt-2">
+                                            <small class="text-muted">Suggestions :</small>
+                                            <div class="btn-group btn-group-sm mt-1" role="group">
+                                                <button type="button" class="btn btn-outline-primary suggestion-btn" data-days="0">Aujourd'hui</button>
+                                                <button type="button" class="btn btn-outline-primary suggestion-btn" data-days="7">Dans 7 jours</button>
+                                                <button type="button" class="btn btn-outline-primary suggestion-btn" data-days="14">Dans 14 jours</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Back to Cities</a>
+                                <!-- Date de départ -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="form-label-wrapper">
+                                            <label for="check_out_date" class="form-label fw-semibold">
+                                                <i class="bi bi-calendar-minus me-2"></i>Date de départ
+                                            </label>
+                                            <span class="required-badge">Requis</span>
+                                        </div>
+                                        <div class="input-group date-input-group">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                <i class="bi bi-box-arrow-left text-muted"></i>
+                                            </span>
+                                            <input type="date" 
+                                                   id="check_out_date" 
+                                                   name="check_out_date" 
+                                                   class="form-control form-control-lg date-picker" 
+                                                   required 
+                                                   min="{{ 'now'|date('Y-m-d') }}"
+                                                   value="{{ app.request.query.get('check_out_date', '') }}">
+                                            <div class="input-group-text date-preview border-start-0">
+                                                <span id="checkOutPreview">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Sélectionnez votre date de départ
+                                        </div>
+                                        <div class="duration-info mt-2">
+                                            <div id="durationDisplay" class="text-muted small">
+                                                <i class="bi bi-clock me-1"></i>
+                                                Durée du séjour : <span id="durationValue">--</span> nuit(s)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Résumé des dates -->
+                            <div class="date-summary-card mt-4">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body p-3">
+                                        <div class="row text-center">
+                                            <div class="col-6">
+                                                <div class="date-summary">
+                                                    <div class="summary-label text-muted small">Arrivée</div>
+                                                    <div class="summary-value fw-bold" id="arrivalDate">--/--/----</div>
+                                                    <div class="summary-extra text-muted small" id="arrivalDay">--</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="date-summary">
+                                                    <div class="summary-label text-muted small">Départ</div>
+                                                    <div class="summary-value fw-bold" id="departureDate">--/--/----</div>
+                                                    <div class="summary-extra text-muted small" id="departureDay">--</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <div class="total-nights">
+                                                <i class="bi bi-moon-stars text-primary me-2"></i>
+                                                <span class="fw-semibold" id="totalNights">0</span> nuit(s) à {{ city.name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Validation de la période -->
+                            <div id="dateValidation" class="mt-3 d-none">
+                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <div id="validationMessage"></div>
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="d-grid gap-3 mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg search-btn">
+                                    <i class="bi bi-search me-2"></i>
+                                    <span class="btn-text">Rechercher les hôtels disponibles</span>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                </button>
+                                
+                                <a href="{{ path('app_dashboard') }}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Changer de destination
+                                </a>
+                            </div>
+
+                            <!-- Information additionnelle -->
+                            <div class="additional-info mt-4 pt-4 border-top text-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Réservation flexible &nbsp;•&nbsp; 
+                                    <i class="bi bi-shield-lock me-1"></i>
+                                    Paiement sécurisé &nbsp;•&nbsp;
+                                    <i class="bi bi-headset me-1"></i>
+                                    Support 24/7
+                                </small>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+.dates-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.shape-1 {
+    width: 400px;
+    height: 400px;
+    top: -200px;
+    right: -100px;
+}
+
+.shape-2 {
+    width: 300px;
+    height: 300px;
+    bottom: -150px;
+    left: -100px;
+}
+
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 10%;
+}
+
+.shape-4 {
+    width: 150px;
+    height: 150px;
+    bottom: 20%;
+    right: 15%;
+}
+
+.presentation-column {
+    padding: 4rem;
+    position: relative;
+    z-index: 2;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.brand-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.brand-name span {
+    color: #6cff8f;
+    font-weight: 800;
+}
+
+.city-info-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.city-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+}
+
+.benefits-list {
+    margin-top: 2rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.benefit-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.benefit-icon i {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.benefit-text h6 {
+    margin-bottom: 0.25rem;
+}
+
+.dates-container {
+    padding: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.dates-card {
+    background: white;
+    border-radius: 25px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.dates-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.dates-header {
+    margin-bottom: 2rem;
+}
+
+.dates-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.booking-progress {
+    margin: 2rem 0;
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.step.active .step-circle {
+    background: #667eea;
+    color: white;
+}
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background: #e2e8f0;
+    min-width: 30px;
+}
+
+.step-line.active {
+    background: #667eea;
+}
+
+.step-label {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.step.active .step-label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.selected-city-indicator .alert {
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.form-label-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.required-badge {
+    font-size: 0.75rem;
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.date-input-group {
+    position: relative;
+}
+
+.date-input-group .form-control {
+    padding: 0.875rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.date-input-group .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.date-preview {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 500;
+    min-width: 110px;
+    justify-content: center;
+}
+
+.suggestion-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.date-summary-card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.date-summary {
+    padding: 0.5rem;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-value {
+    font-size: 1.25rem;
+    color: #2d3748;
+}
+
+.summary-extra {
+    font-size: 0.75rem;
+}
+
+.total-nights {
+    color: #475569;
+    font-size: 0.875rem;
+}
+
+.search-btn {
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.search-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.search-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.additional-info {
+    font-size: 0.875rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 992px) {
+    .presentation-column {
+        display: none;
+    }
+    
+    .dates-container {
+        padding: 2rem;
+    }
+    
+    .dates-card {
+        padding: 2rem;
+    }
+    
+    .progress-steps {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .step-line {
+        display: none;
+    }
+}
+</style>
+
 <script>
-    // Ensure check-out date is after check-in date
-    document.getElementById('check_in_date').addEventListener('change', function() {
-        document.getElementById('check_out_date').min = this.value;
+document.addEventListener('DOMContentLoaded', function() {
+    // Références aux éléments
+    const checkInInput = document.getElementById('check_in_date');
+    const checkOutInput = document.getElementById('check_out_date');
+    const checkInPreview = document.getElementById('checkInPreview');
+    const checkOutPreview = document.getElementById('checkOutPreview');
+    const arrivalDate = document.getElementById('arrivalDate');
+    const departureDate = document.getElementById('departureDate');
+    const arrivalDay = document.getElementById('arrivalDay');
+    const departureDay = document.getElementById('departureDay');
+    const durationValue = document.getElementById('durationValue');
+    const totalNights = document.getElementById('totalNights');
+    const validationDiv = document.getElementById('dateValidation');
+    const validationMessage = document.getElementById('validationMessage');
+    const searchBtn = document.querySelector('.search-btn');
+    const btnText = searchBtn.querySelector('.btn-text');
+    const spinner = searchBtn.querySelector('.spinner-border');
+    const form = document.getElementById('datesForm');
+    
+    // Formatteur de date
+    const daysOfWeek = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const months = ['Janv', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+    
+    function formatDate(dateString) {
+        if (!dateString) return '--/--/----';
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    
+    function formatDateLong(dateString) {
+        if (!dateString) return '--/--/----';
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+    
+    function getDayName(dateString) {
+        if (!dateString) return '--';
+        const date = new Date(dateString);
+        return daysOfWeek[date.getDay()];
+    }
+    
+    function calculateDuration(startDate, endDate) {
+        if (!startDate || !endDate) return 0;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays;
+    }
+    
+    function updateDateDisplay() {
+        const checkIn = checkInInput.value;
+        const checkOut = checkOutInput.value;
+        
+        // Mettre à jour les prévisualisations
+        checkInPreview.textContent = formatDate(checkIn);
+        checkOutPreview.textContent = formatDate(checkOut);
+        
+        // Mettre à jour le résumé
+        arrivalDate.textContent = formatDateLong(checkIn);
+        departureDate.textContent = formatDateLong(checkOut);
+        arrivalDay.textContent = getDayName(checkIn);
+        departureDay.textContent = getDayName(checkOut);
+        
+        // Calculer et afficher la durée
+        const duration = calculateDuration(checkIn, checkOut);
+        durationValue.textContent = duration;
+        totalNights.textContent = duration;
+        
+        // Valider les dates
+        validateDates(checkIn, checkOut);
+    }
+    
+    function validateDates(checkIn, checkOut) {
+        validationDiv.classList.add('d-none');
+        searchBtn.disabled = false;
+        
+        if (!checkIn || !checkOut) {
+            searchBtn.disabled = true;
+            return;
+        }
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const startDate = new Date(checkIn);
+        const endDate = new Date(checkOut);
+        
+        // Validation de base
+        if (startDate < today) {
+            showValidationError("La date d'arrivée ne peut pas être dans le passé.");
+            searchBtn.disabled = true;
+            return;
+        }
+        
+        if (endDate <= startDate) {
+            showValidationError("La date de départ doit être après la date d'arrivée.");
+            searchBtn.disabled = true;
+            return;
+        }
+        
+        if (calculateDuration(checkIn, checkOut) < 1) {
+            showValidationError("La durée minimale du séjour est d'une nuit.");
+            searchBtn.disabled = true;
+            return;
+        }
+        
+        if (calculateDuration(checkIn, checkOut) > 30) {
+            showValidationError("La durée maximale du séjour est de 30 nuits.");
+            searchBtn.disabled = true;
+            return;
+        }
+    }
+    
+    function showValidationError(message) {
+        validationMessage.textContent = message;
+        validationDiv.classList.remove('d-none');
+    }
+    
+    // Gestionnaires d'événements
+    checkInInput.addEventListener('change', function() {
+        // Définir la date de départ minimum
+        if (this.value) {
+            const minDate = new Date(this.value);
+            minDate.setDate(minDate.getDate() + 1);
+            checkOutInput.min = minDate.toISOString().split('T')[0];
+            
+            // Si la date de départ est antérieure à la nouvelle date d'arrivée, la réinitialiser
+            if (checkOutInput.value && new Date(checkOutInput.value) <= new Date(this.value)) {
+                checkOutInput.value = '';
+            }
+        }
+        updateDateDisplay();
     });
+    
+    checkOutInput.addEventListener('change', updateDateDisplay);
+    
+    // Boutons de suggestion de dates
+    document.querySelectorAll('.suggestion-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const daysToAdd = parseInt(this.getAttribute('data-days'));
+            const today = new Date();
+            today.setDate(today.getDate() + daysToAdd);
+            
+            // Formater la date pour l'input
+            const formattedDate = today.toISOString().split('T')[0];
+            checkInInput.value = formattedDate;
+            
+            // Définir la date de départ (arrivée + 1 jour)
+            const checkoutDate = new Date(today);
+            checkoutDate.setDate(checkoutDate.getDate() + 1);
+            checkOutInput.value = checkoutDate.toISOString().split('T')[0];
+            
+            // Mettre à jour l'affichage
+            updateDateDisplay();
+        });
+    });
+    
+    // Soumission du formulaire
+    form.addEventListener('submit', function(e) {
+        const checkIn = checkInInput.value;
+        const checkOut = checkOutInput.value;
+        
+        if (!checkIn || !checkOut) {
+            e.preventDefault();
+            showValidationError("Veuillez sélectionner les dates d'arrivée et de départ.");
+            return;
+        }
+        
+        if (new Date(checkOut) <= new Date(checkIn)) {
+            e.preventDefault();
+            showValidationError("La date de départ doit être après la date d'arrivée.");
+            return;
+        }
+        
+        // Afficher l'état de chargement
+        btnText.classList.add('d-none');
+        spinner.classList.remove('d-none');
+        searchBtn.disabled = true;
+        
+        // Réinitialiser après 5 secondes (au cas où)
+        setTimeout(() => {
+            btnText.classList.remove('d-none');
+            spinner.classList.add('d-none');
+            searchBtn.disabled = false;
+        }, 5000);
+    });
+    
+    // Initialiser l'affichage avec les valeurs existantes
+    updateDateDisplay();
+    
+    // Animer les éléments
+    const benefits = document.querySelectorAll('.benefit-item');
+    benefits.forEach((benefit, index) => {
+        benefit.style.animationDelay = `${index * 0.2}s`;
+    });
+});
 </script>
 {% endblock %}
-

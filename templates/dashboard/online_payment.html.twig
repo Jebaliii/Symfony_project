@@ -1,145 +1,686 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Online Payment{% endblock %}
+{% block title %}Paiement en Ligne - Système de Réservation{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
+        .payment-page {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
         .payment-card {
-            max-width: 600px;
-            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: none;
+            overflow: hidden;
         }
-        .card-input {
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
+        
+        .payment-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .payment-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+        }
+        
+        .reservation-summary {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .summary-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .summary-label {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .summary-value {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: right;
+        }
+        
+        .summary-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #059669;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .card-preview {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .card-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(25deg);
+        }
+        
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
             border-radius: 8px;
-            padding: 12px;
-            font-size: 16px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .card-input:focus {
-            border-color: #0d6efd;
+        
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .card-holder, .card-expiry {
+            font-size: 1rem;
+        }
+        
+        .card-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
             background: white;
             outline: none;
         }
+        
         .card-logos {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-top: 1rem;
         }
+        
         .card-logo {
-            width: 50px;
-            height: 32px;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
+            width: 60px;
+            height: 40px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
         }
-        .reservation-summary {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
+        
+        .card-logo.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            transform: translateY(-2px);
         }
+        
         .secure-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #198754;
-            font-size: 14px;
-            margin-bottom: 20px;
+            justify-content: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+        
+        .security-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .security-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .btn-pay {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 1.25rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
+        }
+        
+        .btn-pay:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-cancel {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            color: #64748b;
+        }
+        
+        .btn-cancel:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+            background: #fef2f2;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step.completed .step-circle {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step.active .step-circle {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        .step.active .step-label {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+        
+        .step-line.completed {
+            background: #10b981;
+        }
+        
+        .hotel-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .payment-processing {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .processing-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 3rem;
+        }
+        
+        .processing-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .payment-header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .card-logos {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .security-features {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            
+            .progress-steps {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .step-line {
+                display: none;
+            }
+            
+            .card-number {
+                font-size: 1.25rem;
+                letter-spacing: 2px;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="container mt-5 mb-5">
-    <div class="payment-card">
-        <div class="card shadow-lg">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">🔒 Secure Online Payment</h4>
+<div class="payment-page">
+    <!-- Barre de progression -->
+    <div class="bg-white shadow-sm py-3">
+        <div class="container">
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Ville</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Dates</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Hôtel</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step completed">
+                    <div class="step-circle">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="step-label">Paiement</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step active">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
             </div>
-            <div class="card-body p-4">
-                <div class="secure-badge">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-                    </svg>
-                    <span>Your payment is secured with SSL encryption</span>
-                </div>
+        </div>
+    </div>
 
-                <!-- Reservation Summary -->
-                <div class="reservation-summary">
-                    <h5 class="mb-3">Reservation Summary</h5>
-                    <div class="row mb-2">
-                        <div class="col-6"><strong>Hotel:</strong></div>
-                        <div class="col-6 text-end">{{ reservation.hotel.name }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6"><strong>Check-in:</strong></div>
-                        <div class="col-6 text-end">{{ reservation.checkInDate|date('Y-m-d') }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6"><strong>Check-out:</strong></div>
-                        <div class="col-6 text-end">{{ reservation.checkOutDate|date('Y-m-d') }}</div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-6"><strong>Total Amount:</strong></div>
-                        <div class="col-6 text-end"><h5 class="text-primary mb-0">{{ reservation.hotel.pricePerNight }} TND</h5></div>
-                    </div>
-                </div>
-
-                <!-- Payment Form -->
-                <form method="POST" action="{{ path('app_process_payment') }}" id="paymentForm">
-                    <div class="card-logos">
-                        <div class="card-logo">VISA</div>
-                        <div class="card-logo">MC</div>
-                        <div class="card-logo">AMEX</div>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="payment-card">
+                    <!-- En-tête -->
+                    <div class="payment-header text-center">
+                        <h2 class="mb-3">
+                            <i class="bi bi-credit-card-2-front me-2"></i>
+                            Paiement Sécurisé
+                        </h2>
+                        <p class="mb-0 opacity-90">Finalisez votre réservation avec un paiement en ligne sécurisé</p>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="card_number" class="form-label">Card Number</label>
-                        <input type="text" class="form-control card-input" id="card_number" name="card_number" 
-                               placeholder="1234 5678 9012 3456" maxlength="19" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="card_holder" class="form-label">Cardholder Name</label>
-                        <input type="text" class="form-control card-input" id="card_holder" name="card_holder" 
-                               placeholder="JOHN DOE" required>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="expiry_date" class="form-label">Expiry Date</label>
-                            <input type="text" class="form-control card-input" id="expiry_date" name="expiry_date" 
-                                   placeholder="MM/YY" maxlength="5" required>
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Badge de l'hôtel -->
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="hotel-badge">
+                                <i class="bi bi-building"></i>
+                                {{ reservation.hotel.name }}
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="cvv" class="form-label">CVV</label>
-                            <input type="text" class="form-control card-input" id="cvv" name="cvv" 
-                                   placeholder="123" maxlength="4" required>
+
+                        <!-- Badge de sécurité -->
+                        <div class="secure-badge">
+                            <i class="bi bi-shield-check fs-4"></i>
+                            <div>
+                                <div class="fw-bold">Paiement 100% sécurisé</div>
+                                <small class="opacity-90">Vos données sont cryptées avec la technologie SSL</small>
+                            </div>
                         </div>
+
+                        <!-- Résumé de la réservation -->
+                        <div class="reservation-summary">
+                            <h5 class="summary-title">
+                                <i class="bi bi-receipt"></i>
+                                Récapitulatif de votre réservation
+                            </h5>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Hôtel</span>
+                                <span class="summary-value">{{ reservation.hotel.name }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Adresse</span>
+                                <span class="summary-value">{{ reservation.hotel.address }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Arrivée</span>
+                                <span class="summary-value">{{ reservation.checkInDate|date('d/m/Y') }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Départ</span>
+                                <span class="summary-value">{{ reservation.checkOutDate|date('d/m/Y') }}</span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Durée du séjour</span>
+                                <span class="summary-value">
+                                    {% set difference = reservation.checkOutDate.diff(reservation.checkInDate) %}
+                                    {{ difference.days }} nuit(s)
+                                </span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <span class="summary-label">Prix par nuit</span>
+                                <span class="summary-value">{{ reservation.hotel.pricePerNight }} TND</span>
+                            </div>
+                            
+                            <div class="summary-item summary-total">
+                                <span class="summary-label">Montant total</span>
+                                <span class="summary-value">
+                                    {% set totalPrice = reservation.hotel.pricePerNight * (reservation.checkOutDate.diff(reservation.checkInDate).days) %}
+                                    {{ totalPrice }} TND
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Formulaire de paiement -->
+                        <form method="POST" action="{{ path('app_process_payment') }}" id="paymentForm">
+                            <!-- Logo des cartes -->
+                            <div class="card-logos">
+                                <div class="card-logo active">VISA</div>
+                                <div class="card-logo">MASTERCARD</div>
+                                <div class="card-logo">AMEX</div>
+                            </div>
+
+                            <!-- Prévisualisation de la carte -->
+                            <div class="card-preview">
+                                <div class="card-chip"></div>
+                                <div class="card-number" id="cardNumberPreview">•••• •••• •••• ••••</div>
+                                <div class="card-info">
+                                    <div>
+                                        <div class="card-label">Titulaire de la carte</div>
+                                        <div id="cardHolderPreview">NOM PRÉNOM</div>
+                                    </div>
+                                    <div>
+                                        <div class="card-label">Date d'expiration</div>
+                                        <div id="cardExpiryPreview">MM/AA</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Champs du formulaire -->
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="card_holder" class="form-label">
+                                            <i class="bi bi-person-vcard"></i>
+                                            Titulaire de la carte
+                                        </label>
+                                        <input type="text" id="card_holder" name="card_holder" class="form-control" 
+                                               placeholder="Nom tel qu'il apparaît sur la carte" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="card_number" class="form-label">
+                                            <i class="bi bi-credit-card"></i>
+                                            Numéro de carte
+                                        </label>
+                                        <input type="text" id="card_number" name="card_number" class="form-control" 
+                                               placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="cvv" class="form-label">
+                                            <i class="bi bi-shield-lock"></i>
+                                            Code CVV
+                                        </label>
+                                        <input type="text" id="cvv" name="cvv" class="form-control" 
+                                               placeholder="123" maxlength="4" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="expiry_month" class="form-label">
+                                            <i class="bi bi-calendar-month"></i>
+                                            Mois d'expiration
+                                        </label>
+                                        <select id="expiry_month" name="expiry_month" class="form-control" required>
+                                            <option value="">Mois</option>
+                                            {% for month in 1..12 %}
+                                                <option value="{{ month|format('%02d') }}">{{ month|format('%02d') }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="expiry_year" class="form-label">
+                                            <i class="bi bi-calendar"></i>
+                                            Année d'expiration
+                                        </label>
+                                        <select id="expiry_year" name="expiry_year" class="form-control" required>
+                                            <option value="">Année</option>
+                                            {% for year in "now"|date("Y").."now"|date("Y")+10 %}
+                                                <option value="{{ year }}">{{ year }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+
+                            <!-- Boutons d'action -->
+                            <div class="row g-3 mt-4">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-pay" id="submitBtn">
+                                        <span class="btn-text">
+                                            <i class="bi bi-lock-fill me-2"></i>
+                                            Payer {{ reservation.hotel.pricePerNight }} TND
+                                        </span>
+                                        <span class="loading-spinner"></span>
+                                    </button>
+                                </div>
+                                <div class="col-12">
+                                    <a href="{{ path('app_cancel_payment', {'reservationId': reservation.id}) }}" class="btn btn-cancel">
+                                        <i class="bi bi-x-circle me-2"></i>
+                                        Annuler le paiement
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Sécurité -->
+                            <div class="security-features">
+                                <div class="security-feature">
+                                    <i class="bi bi-shield-check text-success"></i>
+                                    SSL sécurisé
+                                </div>
+                                <div class="security-feature">
+                                    <i class="bi bi-credit-card text-primary"></i>
+                                    Données cryptées
+                                </div>
+                                <div class="security-feature">
+                                    <i class="bi bi-headset text-info"></i>
+                                    Support 24/7
+                                </div>
+                            </div>
+                        </form>
                     </div>
-
-                    <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            💳 Pay {{ reservation.hotel.pricePerNight }} TND
-                        </button>
-                        <a href="{{ path('app_cancel_payment', {'reservationId': reservation.id}) }}" class="btn btn-outline-secondary">
-                            Cancel Payment
-                        </a>
-                    </div>
-                </form>
-
+                </div>
+                
+                <!-- Conditions générales -->
                 <div class="text-center mt-4">
                     <small class="text-muted">
-                        By completing this payment, you agree to our terms and conditions
+                        En complétant ce paiement, vous acceptez nos 
+                        <a href="#" class="text-primary text-decoration-none">conditions générales</a>
+                        et notre 
+                        <a href="#" class="text-primary text-decoration-none">politique de confidentialité</a>
                     </small>
                 </div>
             </div>
@@ -147,45 +688,173 @@
     </div>
 </div>
 
+<!-- Overlay de traitement -->
+<div class="payment-processing" id="processingOverlay">
+    <div class="processing-content">
+        <div class="processing-spinner"></div>
+        <h4 class="mb-3">Traitement du paiement en cours</h4>
+        <p class="text-muted">Veuillez patienter pendant que nous traitons votre paiement. Ne quittez pas cette page.</p>
+        <div class="mt-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Format card number with spaces
-    document.getElementById('card_number').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\s/g, '');
-        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-        e.target.value = formattedValue;
-    });
-
-    // Format expiry date
-    document.getElementById('expiry_date').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = value.slice(0, 2) + '/' + value.slice(2, 4);
-        }
-        e.target.value = value;
-    });
-
-    // Only allow numbers in CVV
-    document.getElementById('cvv').addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
-    });
-
-    // Form validation
-    document.getElementById('paymentForm').addEventListener('submit', function(e) {
-        const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
-        const cvv = document.getElementById('cvv').value;
+document.addEventListener('DOMContentLoaded', function() {
+    // Références aux éléments
+    const cardHolderInput = document.getElementById('card_holder');
+    const cardNumberInput = document.getElementById('card_number');
+    const cvvInput = document.getElementById('cvv');
+    const expiryMonth = document.getElementById('expiry_month');
+    const expiryYear = document.getElementById('expiry_year');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+    const paymentForm = document.getElementById('paymentForm');
+    const processingOverlay = document.getElementById('processingOverlay');
+    
+    // Prévisualisations
+    const cardNumberPreview = document.getElementById('cardNumberPreview');
+    const cardHolderPreview = document.getElementById('cardHolderPreview');
+    const cardExpiryPreview = document.getElementById('cardExpiryPreview');
+    
+    // Formatage du numéro de carte
+    cardNumberInput.addEventListener('input', function() {
+        let value = this.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formatted = '';
         
-        if (cardNumber.length < 13 || cardNumber.length > 19) {
-            e.preventDefault();
-            alert('Please enter a valid card number');
-            return false;
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formatted += ' ';
+            }
+            formatted += value[i];
         }
         
-        if (cvv.length < 3 || cvv.length > 4) {
-            e.preventDefault();
-            alert('Please enter a valid CVV');
-            return false;
+        this.value = formatted.substring(0, 19);
+        
+        // Mettre à jour la prévisualisation
+        const preview = formatted || '•••• •••• •••• ••••';
+        cardNumberPreview.textContent = preview;
+        
+        // Détecter le type de carte
+        detectCardType(value);
+    });
+    
+    // Détection du type de carte
+    function detectCardType(cardNumber) {
+        const logos = document.querySelectorAll('.card-logo');
+        logos.forEach(logo => logo.classList.remove('active'));
+        
+        if (/^4/.test(cardNumber)) {
+            document.querySelector('.card-logo:first-child').classList.add('active');
+        } else if (/^5[1-5]/.test(cardNumber)) {
+            document.querySelector('.card-logo:nth-child(2)').classList.add('active');
+        } else if (/^3[47]/.test(cardNumber)) {
+            document.querySelector('.card-logo:last-child').classList.add('active');
+        }
+    }
+    
+    // Mettre à jour la prévisualisation du titulaire
+    cardHolderInput.addEventListener('input', function() {
+        const value = this.value.toUpperCase() || 'NOM PRÉNOM';
+        cardHolderPreview.textContent = value.substring(0, 20);
+    });
+    
+    // Mettre à jour la prévisualisation de la date d'expiration
+    function updateExpiryPreview() {
+        const month = expiryMonth.value || 'MM';
+        const year = expiryYear.value ? expiryYear.value.slice(-2) : 'AA';
+        cardExpiryPreview.textContent = `${month}/${year}`;
+    }
+    
+    expiryMonth.addEventListener('change', updateExpiryPreview);
+    expiryYear.addEventListener('change', updateExpiryPreview);
+    
+    // Formatage CVV (nombres seulement)
+    cvvInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+    });
+    
+    // Validation du formulaire
+    function validateForm() {
+        let isValid = true;
+        
+        // Validation des champs obligatoires
+        if (!cardHolderInput.value.trim()) isValid = false;
+        
+        const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+        if (!cardNumber || cardNumber.length < 13 || cardNumber.length > 19) isValid = false;
+        
+        if (!cvvInput.value.trim() || cvvInput.value.length < 3) isValid = false;
+        if (!expiryMonth.value || !expiryYear.value) isValid = false;
+        
+        // Validation de la date d'expiration
+        if (expiryMonth.value && expiryYear.value) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+            
+            if (parseInt(expiryYear.value) < currentYear) {
+                isValid = false;
+            } else if (parseInt(expiryYear.value) === currentYear && parseInt(expiryMonth.value) < currentMonth) {
+                isValid = false;
+            }
+        }
+        
+        // Activer/désactiver le bouton
+        submitBtn.disabled = !isValid;
+        
+        return isValid;
+    }
+    
+    // Événements de validation en temps réel
+    [cardHolderInput, cardNumberInput, cvvInput, expiryMonth, expiryYear].forEach(element => {
+        if (element) {
+            element.addEventListener('input', validateForm);
+            element.addEventListener('change', validateForm);
         }
     });
+    
+    // Soumission du formulaire
+    paymentForm.addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+            alert('Veuillez remplir tous les champs du formulaire correctement.');
+            return;
+        }
+        
+        // Afficher l'overlay de traitement
+        processingOverlay.style.display = 'flex';
+        
+        // Afficher l'état de chargement sur le bouton
+        btnText.classList.add('d-none');
+        loadingSpinner.style.display = 'block';
+        submitBtn.disabled = true;
+        
+        // Réinitialiser après 10 secondes (au cas où)
+        setTimeout(() => {
+            btnText.classList.remove('d-none');
+            loadingSpinner.style.display = 'none';
+            submitBtn.disabled = false;
+            processingOverlay.style.display = 'none';
+        }, 10000);
+    });
+    
+    // Annulation de la soumission avec Échap
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            processingOverlay.style.display = 'none';
+            btnText.classList.remove('d-none');
+            loadingSpinner.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    });
+    
+    // Initialisation
+    validateForm();
+});
 </script>
 {% endblock %}
-

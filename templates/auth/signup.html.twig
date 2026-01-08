@@ -1,74 +1,838 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Sign Up - Booking System{% endblock %}
+{% block title %}Inscription - Système de Réservation{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <h1 class="card-title text-center mb-4">Create Account</h1>
+<div class="signup-page">
+    <!-- Arrière-plan avec éléments décoratifs -->
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
 
-                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-
-                    <div class="mb-3">
-                        {{ form_label(form.email, 'Email Address', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
-                        {% if form.email.vars.errors|length > 0 %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.email.vars.errors %}
-                                    {{ error.message }}<br>
-                                {% endfor %}
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <!-- Colonne de présentation à gauche -->
+            <div class="col-lg-6 d-none d-lg-block presentation-column">
+                <div class="presentation-content">
+                    <div class="brand-section mb-5">
+                        <div class="logo-container mb-4">
+                            <div class="logo-icon">
+                                <i class="bi bi-calendar-check"></i>
                             </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form_label(form.plainPassword.first, 'Password', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
-                        {% if form.plainPassword.first.vars.errors|length > 0 %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.plainPassword.first.vars.errors %}
-                                    {{ error.message }}<br>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form_label(form.plainPassword.second, 'Confirm Password', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
-                        {% if form.plainPassword.second.vars.errors|length > 0 %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.plainPassword.second.vars.errors %}
-                                    {{ error.message }}<br>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    {% if form.plainPassword.vars.errors|length > 0 %}
-                        <div class="alert alert-danger">
-                            {% for error in form.plainPassword.vars.errors %}
-                                {{ error.message }}<br>
-                            {% endfor %}
+                            <h1 class="brand-name">Booking<span>Pro</span></h1>
                         </div>
-                    {% endif %}
+                        <h2 class="display-5 fw-bold text-white mb-4">
+                            Rejoignez notre communauté<br>professionnelle
+                        </h2>
+                        <p class="lead text-light opacity-75">
+                            Créez votre compte et accédez à des fonctionnalités<br>
+                            avancées de gestion de réservations.
+                        </p>
+                    </div>
 
-                    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary w-100 mb-3'}}) }}
+                    <div class="features-list mt-5">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-lightning-charge"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Configuration rapide</h5>
+                                <p class="text-light opacity-75 mb-0">Compte opérationnel en 2 minutes</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-bar-chart"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Analyses détaillées</h5>
+                                <p class="text-light opacity-75 mb-0">Statistiques et rapports avancés</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Gestion d'équipe</h5>
+                                <p class="text-light opacity-75 mb-0">Collaborez avec vos collaborateurs</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Application mobile</h5>
+                                <p class="text-light opacity-75 mb-0">Gérez vos réservations partout</p>
+                            </div>
+                        </div>
+                    </div>
 
-                    {{ form_end(form) }}
+                    <div class="testimonial mt-5">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="avatar me-3">
+                                <img src="https://ui-avatars.com/api/?name=Jean+Dupont&background=667eea&color=fff" 
+                                     alt="Jean Dupont" class="rounded-circle" width="50">
+                            </div>
+                            <div>
+                                <blockquote class="text-white mb-2">
+                                    <p class="fs-5">"L'inscription est intuitive et le service exceptionnel."</p>
+                                </blockquote>
+                                <footer class="blockquote-footer text-light opacity-75">
+                                    Jean Dupont, <cite title="Source Title">Restaurateur</cite>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <hr>
+            <!-- Colonne d'inscription à droite -->
+            <div class="col-lg-6 col-md-8">
+                <div class="signup-container">
+                    <div class="signup-card">
+                        <!-- En-tête de la carte -->
+                        <div class="signup-header text-center mb-5">
+                            <h3 class="signup-title">Créer un compte</h3>
+                            <p class="text-muted">Commencez votre essai gratuit de 14 jours</p>
+                            <div class="progress" style="height: 4px; max-width: 200px; margin: 1.5rem auto;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 33%"></div>
+                            </div>
+                        </div>
 
-                    <p class="text-center mb-0">
-                        Already have an account? <a href="{{ path('app_login') }}" class="text-decoration-none">Login here</a>
-                    </p>
+                        <!-- Formulaire d'inscription -->
+                        {{ form_start(form, {'attr': {'class': 'signup-form', 'novalidate': 'novalidate'}}) }}
+
+                            <!-- Champ Email -->
+                            <div class="form-group mb-4">
+                                <div class="form-label-wrapper">
+                                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <span class="required-badge">Requis</span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-envelope text-muted"></i>
+                                    </span>
+                                    {{ form_widget(form.email, {'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'votre.email@exemple.com',
+                                        'aria-describedby': 'emailHelp'
+                                    }}) }}
+                                </div>
+                                <div id="emailHelp" class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Utilisez votre email professionnel de préférence
+                                </div>
+                                {% if form.email.vars.errors|length > 0 %}
+                                    <div class="error-message text-danger small mt-2">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {% for error in form.email.vars.errors %}
+                                            {{ error.message }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Champ Mot de passe -->
+                            <div class="form-group mb-4">
+                                <div class="form-label-wrapper">
+                                    {{ form_label(form.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <span class="required-badge">Requis</span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-lock text-muted"></i>
+                                    </span>
+                                    {{ form_widget(form.plainPassword.first, {'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Créez un mot de passe sécurisé',
+                                        'id': 'password'
+                                    }}) }}
+                                    <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength mt-2">
+                                    <div class="progress" style="height: 4px;">
+                                        <div class="progress-bar" id="passwordStrengthBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="password-requirements small text-muted mt-2">
+                                        <div><i class="bi bi-check-circle text-success d-none" id="reqLength"></i><i class="bi bi-circle" id="reqLengthIcon"></i> Au moins 8 caractères</div>
+                                        <div><i class="bi bi-check-circle text-success d-none" id="reqUpper"></i><i class="bi bi-circle" id="reqUpperIcon"></i> Une majuscule</div>
+                                        <div><i class="bi bi-check-circle text-success d-none" id="reqNumber"></i><i class="bi bi-circle" id="reqNumberIcon"></i> Un chiffre</div>
+                                        <div><i class="bi bi-check-circle text-success d-none" id="reqSpecial"></i><i class="bi bi-circle" id="reqSpecialIcon"></i> Un caractère spécial</div>
+                                    </div>
+                                </div>
+                                {% if form.plainPassword.first.vars.errors|length > 0 %}
+                                    <div class="error-message text-danger small mt-2">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {% for error in form.plainPassword.first.vars.errors %}
+                                            {{ error.message }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Champ Confirmation du mot de passe -->
+                            <div class="form-group mb-4">
+                                <div class="form-label-wrapper">
+                                    {{ form_label(form.plainPassword.second, 'Confirmer le mot de passe', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                    <span class="required-badge">Requis</span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-lock-fill text-muted"></i>
+                                    </span>
+                                    {{ form_widget(form.plainPassword.second, {'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Répétez votre mot de passe',
+                                        'id': 'confirmPassword'
+                                    }}) }}
+                                    <button class="btn btn-outline-secondary border-start-0" type="button" id="toggleConfirmPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" class="form-text d-none">
+                                    <i class="bi bi-check-circle text-success me-1"></i>
+                                    Les mots de passe correspondent
+                                </div>
+                                <div id="passwordMismatch" class="form-text text-danger d-none">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    Les mots de passe ne correspondent pas
+                                </div>
+                                {% if form.plainPassword.second.vars.errors|length > 0 %}
+                                    <div class="error-message text-danger small mt-2">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {% for error in form.plainPassword.second.vars.errors %}
+                                            {{ error.message }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Checkbox Conditions d'utilisation -->
+                            <div class="form-group mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                    <label class="form-check-label text-muted" for="terms">
+                                        J'accepte les <a href="#" class="text-primary text-decoration-none">conditions d'utilisation</a>
+                                        et la <a href="#" class="text-primary text-decoration-none">politique de confidentialité</a>
+                                    </label>
+                                    <div class="invalid-feedback d-none" id="termsError">
+                                        Vous devez accepter les conditions d'utilisation.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bouton d'inscription -->
+                            {{ form_widget(form.submit, {'attr': {
+                                'class': 'btn btn-primary btn-lg w-100 mb-4 signup-btn',
+                                'id': 'submitBtn'
+                            }, 'label': 'Créer mon compte'}) }}
+
+                            <!-- Séparateur -->
+                            <div class="separator">
+                                <span class="separator-text">Ou inscrivez-vous avec</span>
+                            </div>
+
+                            <!-- Boutons d'inscription alternative -->
+                            <div class="social-signup mb-4">
+                                <button type="button" class="btn btn-outline-secondary w-100 mb-2">
+                                    <i class="bi bi-google me-2"></i>Google
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary w-100">
+                                    <i class="bi bi-microsoft me-2"></i>Microsoft 365
+                                </button>
+                            </div>
+
+                        {{ form_end(form) }}
+
+                        <!-- Lien de connexion -->
+                        <div class="text-center">
+                            <p class="text-muted mb-2">Vous avez déjà un compte ?</p>
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-success btn-lg w-100">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                            </a>
+                        </div>
+
+                        <!-- Footer de la carte -->
+                        <div class="signup-footer mt-4 pt-4 border-top text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-1"></i>
+                                Données 100% sécurisées &nbsp;•&nbsp; 
+                                <i class="bi bi-credit-card me-1"></i>
+                                Essai gratuit &nbsp;•&nbsp;
+                                <i class="bi bi-headset me-1"></i>
+                                Support inclus
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<style>
+.signup-page {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.shape-1 {
+    width: 500px;
+    height: 500px;
+    top: -250px;
+    right: -150px;
+}
+
+.shape-2 {
+    width: 350px;
+    height: 350px;
+    bottom: -175px;
+    left: -100px;
+}
+
+.shape-3 {
+    width: 250px;
+    height: 250px;
+    top: 20%;
+    left: 15%;
+}
+
+.shape-4 {
+    width: 180px;
+    height: 180px;
+    bottom: 30%;
+    right: 10%;
+}
+
+.presentation-column {
+    padding: 4rem;
+    position: relative;
+    z-index: 2;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.brand-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.brand-name span {
+    color: #fbbf24;
+    font-weight: 800;
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.feature-text h5 {
+    color: white;
+    margin-bottom: 0.25rem;
+}
+
+.testimonial {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.avatar img {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.signup-container {
+    padding: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.signup-card {
+    background: white;
+    border-radius: 25px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.signup-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
+
+.signup-header {
+    margin-bottom: 2rem;
+}
+
+.signup-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.form-label-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.required-badge {
+    font-size: 0.75rem;
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.signup-form .form-group {
+    position: relative;
+}
+
+.signup-form .form-control {
+    padding: 0.875rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.signup-form .form-control:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: white;
+}
+
+.signup-form .form-text {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+.password-requirements {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.password-requirements div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.signup-btn {
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.signup-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+}
+
+.signup-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.separator-text {
+    padding: 0 1rem;
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.social-signup .btn {
+    padding: 0.875rem;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.social-signup .btn:hover {
+    border-color: #4f46e5;
+    background: #f8fafc;
+}
+
+.signup-footer {
+    font-size: 0.875rem;
+}
+
+.error-message {
+    background: #fef2f2;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border-left: 3px solid #dc2626;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 992px) {
+    .presentation-column {
+        display: none;
+    }
+    
+    .signup-container {
+        padding: 2rem;
+    }
+    
+    .signup-card {
+        padding: 2rem;
+    }
+    
+    .password-requirements {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Toggle password visibility
+function setupPasswordToggle(passwordId, toggleId) {
+    const toggleBtn = document.getElementById(toggleId);
+    const passwordInput = document.getElementById(passwordId);
+    
+    if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    }
+}
+
+// Check password strength
+function checkPasswordStrength(password) {
+    let strength = 0;
+    
+    // Check length
+    if (password.length >= 8) {
+        strength += 25;
+        document.getElementById('reqLength').classList.remove('d-none');
+        document.getElementById('reqLengthIcon').classList.add('d-none');
+    } else {
+        document.getElementById('reqLength').classList.add('d-none');
+        document.getElementById('reqLengthIcon').classList.remove('d-none');
+    }
+    
+    // Check uppercase
+    if (/[A-Z]/.test(password)) {
+        strength += 25;
+        document.getElementById('reqUpper').classList.remove('d-none');
+        document.getElementById('reqUpperIcon').classList.add('d-none');
+    } else {
+        document.getElementById('reqUpper').classList.add('d-none');
+        document.getElementById('reqUpperIcon').classList.remove('d-none');
+    }
+    
+    // Check numbers
+    if (/[0-9]/.test(password)) {
+        strength += 25;
+        document.getElementById('reqNumber').classList.remove('d-none');
+        document.getElementById('reqNumberIcon').classList.add('d-none');
+    } else {
+        document.getElementById('reqNumber').classList.add('d-none');
+        document.getElementById('reqNumberIcon').classList.remove('d-none');
+    }
+    
+    // Check special characters
+    if (/[^A-Za-z0-9]/.test(password)) {
+        strength += 25;
+        document.getElementById('reqSpecial').classList.remove('d-none');
+        document.getElementById('reqSpecialIcon').classList.add('d-none');
+    } else {
+        document.getElementById('reqSpecial').classList.add('d-none');
+        document.getElementById('reqSpecialIcon').classList.remove('d-none');
+    }
+    
+    // Update progress bar
+    const bar = document.getElementById('passwordStrengthBar');
+    bar.style.width = strength + '%';
+    
+    // Update color based on strength
+    if (strength < 50) {
+        bar.className = 'progress-bar bg-danger';
+    } else if (strength < 75) {
+        bar.className = 'progress-bar bg-warning';
+    } else {
+        bar.className = 'progress-bar bg-success';
+    }
+}
+
+// Check password match
+function checkPasswordMatch() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const matchDiv = document.getElementById('passwordMatch');
+    const mismatchDiv = document.getElementById('passwordMismatch');
+    
+    if (password && confirmPassword) {
+        if (password === confirmPassword) {
+            matchDiv.classList.remove('d-none');
+            mismatchDiv.classList.add('d-none');
+            return true;
+        } else {
+            matchDiv.classList.add('d-none');
+            mismatchDiv.classList.remove('d-none');
+            return false;
+        }
+    }
+    return false;
+}
+
+// Validate email format
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Check form validity and show/hide submit button
+function validateForm() {
+    const email = document.getElementById('{{ form.email.vars.id }}').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const terms = document.getElementById('terms').checked;
+    const submitBtn = document.getElementById('submitBtn');
+    const termsError = document.getElementById('termsError');
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Validate email
+    if (!email) {
+        isValid = false;
+    } else if (!validateEmail(email)) {
+        isValid = false;
+    }
+    
+    // Validate password
+    if (!password || password.length < 8) {
+        isValid = false;
+    }
+    
+    // Validate password confirmation
+    if (!confirmPassword || password !== confirmPassword) {
+        isValid = false;
+    }
+    
+    // Validate terms
+    if (!terms) {
+        isValid = false;
+        termsError.classList.remove('d-none');
+    } else {
+        termsError.classList.add('d-none');
+    }
+    
+    // Enable/disable submit button
+    submitBtn.disabled = !isValid;
+    
+    return isValid;
+}
+
+// Form submission handler
+function handleFormSubmit(e) {
+    if (!validateForm()) {
+        e.preventDefault();
+        // Show all error messages
+        const terms = document.getElementById('terms').checked;
+        const termsError = document.getElementById('termsError');
+        
+        if (!terms) {
+            termsError.classList.remove('d-none');
+        }
+        
+        // Focus on first invalid field
+        const email = document.getElementById('{{ form.email.vars.id }}');
+        if (!email.value || !validateEmail(email.value)) {
+            email.focus();
+        } else if (!document.getElementById('password').value) {
+            document.getElementById('password').focus();
+        } else if (!document.getElementById('confirmPassword').value) {
+            document.getElementById('confirmPassword').focus();
+        } else if (!terms) {
+            document.getElementById('terms').focus();
+        }
+        
+        return false;
+    }
+    
+    // Add loading state
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Création du compte...';
+    submitBtn.disabled = true;
+    
+    // Revert after 5 seconds in case of error
+    setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 5000);
+    
+    return true;
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup password toggles
+    setupPasswordToggle('password', 'togglePassword');
+    setupPasswordToggle('confirmPassword', 'toggleConfirmPassword');
+    
+    // Real-time validation
+    const formElements = [
+        document.getElementById('{{ form.email.vars.id }}'),
+        document.getElementById('password'),
+        document.getElementById('confirmPassword'),
+        document.getElementById('terms')
+    ];
+    
+    formElements.forEach(element => {
+        if (element) {
+            if (element.type === 'checkbox') {
+                element.addEventListener('change', validateForm);
+            } else {
+                element.addEventListener('input', function() {
+                    if (element.id === 'password') {
+                        checkPasswordStrength(this.value);
+                    }
+                    if (element.id === 'password' || element.id === 'confirmPassword') {
+                        checkPasswordMatch();
+                    }
+                    validateForm();
+                });
+            }
+        }
+    });
+    
+    // Form submission
+    const form = document.querySelector('.signup-form');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+    
+    // Animate feature items
+    const features = document.querySelectorAll('.feature-item');
+    features.forEach((feature, index) => {
+        feature.style.animationDelay = `${index * 0.2}s`;
+    });
+    
+    // Initial validation
+    validateForm();
+});
+</script>
+{% endblock %}
